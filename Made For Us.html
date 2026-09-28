@@ -937,6 +937,12 @@ const BOSS_DODGES = 3;
 
 const INVULN_TIME = 1.3;
 
+// Trong file Road-Straight.png, vạch kẻ trắng nằm sâu bên trong ảnh (không phải ngay mép
+// trên) — nếu vẽ ảnh chạm đúng mép trên vào groundY thì vạch kẻ lại nằm THẤP hơN mặt đất
+// logic một đoạn, khiến nhân vật/cây/gai trông như lơ lửng phía trên vạch kẻ. Nâng cả dải
+// đường lên để vạch kẻ mới là nơi thật sự trùng với groundY (nơi mọi thứ đang neo chân).
+const LANE_LIFT = 29;
+
 const LEFT_KEYS = ["ArrowLeft", "a", "A"];
 const RIGHT_KEYS = ["ArrowRight", "d", "D"];
 const JUMP_KEYS = ["ArrowUp", "w", "W", " ", "Spacebar"];
@@ -2016,7 +2022,7 @@ function drawTerrain(ctx, type, img, camX, groundY, CW) {
 
 // dải đất dưới mặt đường: tối, có vân ngang
 function drawGroundStrip(ctx, camX, groundY, CW, CH) {
-  const top = groundY + 60;
+  const top = groundY + 60 - LANE_LIFT;
   ctx.fillStyle = "#231b2a";
   ctx.fillRect(0, top, CW, CH - top);
   ctx.fillStyle = "#2f2438";
@@ -2030,7 +2036,7 @@ function drawBrickGround(ctx, rowImg, camX, CW, groundY, ch) {
   if (!ready(rowImg)) return;
   const rowH = BLOCK; // cùng cỡ với gạch chướng ngại
   const rowW = rowH * (rowImg.width / rowImg.height);
-  const top = groundY + 66;
+  const top = groundY + 66 - LANE_LIFT;
   const from = Math.floor(camX / rowW) * rowW;
   for (let y = top; y < ch; y += rowH) {
     for (let x = from; x < camX + CW + rowW; x += rowW) ctx.drawImage(rowImg, x, y, rowW + 1, rowH);
@@ -2047,7 +2053,7 @@ function drawRoad(ctx, roadImg, camX, CW, groundY, ch) {
     const tileW = roadImg.width * scale;
     const from = Math.floor(camX / tileW) * tileW;
     for (let x = from; x < camX + CW + tileW; x += tileW) {
-      ctx.drawImage(roadImg, x, groundY - 8, tileW + 1, targetH);
+      ctx.drawImage(roadImg, x, groundY - 8 - LANE_LIFT, tileW + 1, targetH);
     }
     return;
   }
