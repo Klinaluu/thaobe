@@ -43,23 +43,23 @@ tui nhớ bạn nhắmm`,
 // ---------- ảnh & video của khách ----------
 // Ảnh polaroid: đặt file vào assets/photos/ rồi điền đường dẫn vào từng mốc bên dưới.
 // Video: đặt file .mp4 vào assets/video/ rồi điền tên vào đây (nên dưới 15MB).
-export const VIDEO_SRC = "assets/video/video.mp4"; // đã convert từ video.MOV bằng avconvert (macOS) để phát ổn định trên mọi trình duyệt
-// Nhạc nền: giống bản demo — tự tắt khi phát video, tự nhỏ lại một chút mỗi lần nhảy.
+export const VIDEO_SRC = "assets/video/video.mp4"; // khách gửi .MOV → đổi sang .mp4 bằng avconvert
+// Nhạc nền: dùng nhạc chung của game. Tự tắt khi phát video, nhỏ lại một nhịp mỗi lần nhảy.
 export const MUSIC_SRC = "assets/audio/bgm.mp3";
 // Ảnh ở màn hình mở đầu (ảnh dọc kiểu photobooth rất hợp). Để "" thì hiện khung trống.
-export const TITLE_PHOTO = "assets/characters/Couple-Pose-Happy-01.png"; // sprite 2 nhân vật ôm nhau, thay cho ảnh chụp
+export const TITLE_PHOTO = "assets/characters/Couple-Pose-Happy-01.png"; // dùng sprite 2 người ôm nhau thay ảnh chụp
 // true  = luôn vẽ khung ảnh trống kèm chữ hướng dẫn (dùng cho bản demo)
 // false = mốc nào chưa có ảnh thì không treo khung
 export const SHOW_EMPTY_PHOTO_FRAMES = false; // bản khách: mốc chưa có ảnh thì không treo khung
 
-// Xe chở đôi chỉ có 1 ảnh (hiệu ứng chạy xe do game tự tạo)
+// Xe chở đôi chỉ có 1 ảnh — game tự thêm hiệu ứng chạy xe (khói, bụi, vệt gió, rung máy)
 export const COUPLE_FRAMES = ["assets/characters/Couple-Bike-Side-01.png"];
 
 // ---------- 5 món quà của chặng solo ----------
 // icon: để trống ("") thì game tự vẽ hình thay thế.
 // id giữ nguyên (khớp js/levels.js dùng chung) — chỉ đổi label/icon.
-// Bạn gửi 4 ảnh (2 mèo, máy ảnh, cà phê) nên 4/5 món đổi icon, còn "letter" giữ icon mặc định.
-// TODO xác nhận: thứ tự gán tạm — đổi label/icon dưới đây nếu muốn khác.
+// Khách có 4 món riêng (cà phê, máy ảnh, 2 mèo) → icon trong assets/characters/;
+// món thứ 5 "Letter" giữ icon mặc định của game.
 export const GIFTS = [
   { id: "matcha", label: "Coffee", icon: "assets/characters/Item-Coffee-01.png" },
   { id: "chocolate", label: "Camera", icon: "assets/characters/Item-Camera-01.png" },
@@ -77,7 +77,7 @@ export const GIFTS = [
 //                "chest" → hòm hồng: System Message → Level Unlocked → lá thư
 //                "gift"  → hòm quà rơi từ trời → video
 // Ba mốc có event là phần kịch bản, nên giữ nguyên thứ tự ở cuối danh sách.
-// Không hiện tên/ngày trên khung polaroid — chỉ để trống khung ảnh theo yêu cầu.
+// Khách không muốn chữ dưới khung ảnh → date/name để "" ở mọi mốc (ô HUD khi đó hiện "Together ♥").
 export const MILESTONES = [
   { date: "", name: "", sky: ["#dfe9ff", "#f6c7d8"], photo: "assets/photos/Moc Chou 25_.jpg" },
   { date: "", name: "", sky: ["#3b2a5a", "#b57aa8"], photo: "assets/photos/Anni 1st 25.04.jpg" },
@@ -90,8 +90,6 @@ export const MILESTONES = [
   { date: "", name: "", sky: ["#e7d6ea", "#f6d3de"], photo: "assets/photos/You and me.jpg" },
   { date: "", name: "", sky: ["#ffd9e0", "#ffe9d6"], photo: "assets/photos/Love.jpg" },
   {
-    // date/name để trống: 3 mốc này không có ảnh nhưng vẫn hiện lên khung chữ HUD phía trên
-    // khi đi ngang qua, để "DD.MM"/tên demo lộ ra thì lộ ngay trên màn hình cho khách thấy.
     date: "", name: "", sky: ["#7fb7d9", "#cfe7f2"], photo: "",
     event: "rain",
     blocks: [{ x: 300 }, { x: 520, h: 2 }],
@@ -102,10 +100,6 @@ export const MILESTONES = [
   { date: "", name: "", sky: ["#bfe0f2", "#e8f3ee"], photo: "", event: "gift" },
 ];
 
-// ---------- nền parallax riêng: lớp xa → gần, tốc độ trôi (1 = cùng tốc độ đường) ----------
-export const SCENE_LAYERS = {
-  // Hồ Gươm: trời + mây → dãy nhà + hàng cây (sau tháp) → mặt hồ + Tháp Rùa
-  "ho-guom": { layers: ["L1.png", "L2.png", "L3.png"], speeds: [0.05, 0.16, 0.4] },
-  // Hoàng hôn: trời + mặt trời → skyline + mặt nước → vệt nắng (khoá theo mặt trời)
-  "ho-tay": { layers: ["L1.png", "L2.png", "L3.png"], speeds: [0.02, 0.3, 0.02] },
-};
+// ---------- nền parallax riêng ----------
+// Để trống = nền 3 lớp mặc định của game (xem js/config.js gốc để biết cách khai báo nền riêng).
+export const SCENE_LAYERS = {};

@@ -126,9 +126,11 @@ function buildModal(platform, text) {
         <ol class="install-steps">${copy.steps.map((s) => `<li>${s}</li>`).join("")}</ol>
         ${copy.note ? `<p class="install-note">${copy.note}</p>` : ""}
         <button class="pixel-btn primary" data-action data-install-label="${copy.installAction || ""}">${platform === "android" && deferredPrompt && copy.installAction ? copy.installAction : copy.action}</button>
-        <input class="install-link hidden" data-link readonly value="${location.href}">
+        <input class="install-link hidden" data-link readonly>
       </div>
     </div>`;
+  // gán qua thuộc tính, không ghép vào HTML: link có dấu " sẽ không chèn được mã vào trang
+  modal.querySelector("[data-link]").value = location.href;
   return modal;
 }
 

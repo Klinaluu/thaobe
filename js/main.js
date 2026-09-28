@@ -17,7 +17,7 @@ import { JourneyGame } from "./engine.js";
 const COUPLE_MILESTONES = MILESTONES.map((ms) => ({ ...ms, terrain: COUPLE_TERRAIN }));
 
 // Nền parallax: khách có thể khai báo số lớp + tốc độ riêng từng cảnh trong config.js
-// (SCENE_LAYERS), không khai báo thì dùng bộ 2 lớp mặc định của assets.js.
+// (SCENE_LAYERS), không khai báo thì dùng bộ 3 lớp mặc định của assets.js.
 const CUSTOM_SCENES = SCENE_LAYERS || {};
 const SCENE_PATHS = Object.fromEntries(
   Object.keys(SCENES).map((id) => {
@@ -26,7 +26,7 @@ const SCENE_PATHS = Object.fromEntries(
   })
 );
 const SCENE_SPEEDS_BY_ID = Object.fromEntries(
-  Object.keys(SCENES).map((id) => [id, (CUSTOM_SCENES[id] && CUSTOM_SCENES[id].speeds) || SCENE_SPEEDS])
+  Object.keys(SCENES).map((id) => [id, (CUSTOM_SCENES[id] && CUSTOM_SCENES[id].speeds) || SCENE_SPEEDS[id]])
 );
 
 // Khung hình xe chở đôi: khách khai báo riêng (vd chỉ 1 ảnh) hoặc dùng bộ mặc định
@@ -176,13 +176,24 @@ function hudSoloMode() {
   renderScore(0);
   $("hud-time").textContent = "0:00";
 }
+// chữ ngày/tên do khách viết: dựng bằng textContent để "<3" hay ký tự đặc biệt không vỡ HTML
+function renderMilestoneLabel(ms) {
+  const el = $("hud-milestone");
+  if (!ms.date && !ms.name) {
+    el.textContent = "Together ♥";
+    return;
+  }
+  const date = document.createElement("b");
+  date.textContent = ms.date;
+  el.replaceChildren(date, document.createTextNode(ms.name));
+}
 function hudCoupleMode() {
   $("hud-hearts").classList.add("hidden");
   $("hud-items").classList.add("hidden");
   $("hud-milestone").classList.remove("hidden");
   $("hud-portrait").classList.remove("hidden");
   $("hud-stats").classList.remove("hidden");
-  $("hud-milestone").innerHTML = "Together ♥";
+  $("hud-milestone").textContent = "Together ♥";
   renderBar(0);
 }
 
@@ -247,7 +258,7 @@ function startJourney() {
           return;
         }
         // mốc không ghi ngày/tên (vd bản khách bỏ chú thích) thì giữ dòng "Together", không để trống ô HUD
-        $("hud-milestone").innerHTML = ms.date || ms.name ? `<b>${ms.date}</b>${ms.name}` : "Together ♥";
+        renderMilestoneLabel(ms);
         renderBar((j / COUPLE_MILESTONES.length) * 100);
         if (ms.event === "rain") showHint("It's raining! Jump the walls and grab the umbrella", 3600);
       },
@@ -452,7 +463,7 @@ function wireUI() {
   });
   $("btn-unlock-continue").addEventListener("click", () => {
     showScreen("screen-level");
-    $("hud-milestone").innerHTML = "Level 2 · unlocked ♥";
+    $("hud-milestone").textContent = "Level 2 · unlocked ♥";
     openEnvelope();
   });
 
@@ -461,7 +472,7 @@ function wireUI() {
     openLetter(false);
   });
   $("letter-close").addEventListener("click", () => hideModal("modal-letter"));
-  // đọc thư xong (ở Sa Pa) → đi tiếp tới Hoàn Kiếm, hòm video sẽ rơi xuống ở đó
+  // đọc thư xong → đi tiếp tới mốc cuối, hòm video sẽ rơi xuống ở đó
   $("btn-watch-video").addEventListener("click", () => {
     hideModal("modal-letter");
     currentGame && currentGame.resumeJourney();

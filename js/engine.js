@@ -1,10 +1,11 @@
 // ============================================================
-// RIDE TO US — engine (canvas 2D, physics đơn giản, kiểu Mario)
-// Một con đường liền mạch gồm 4 chương:
-//   solo    : nhảy qua chồng gạch, thu thập 5 món quà (có 3 tim)
-//   couple  : xe chở 2 người chạy qua các biển báo địa điểm + polaroid trên trời
-//   chest   : tới chiếc hòm hồng giữa đường, bấm mở
-//   gift    : hòm quà rơi từ trời xuống, bấm mở → thư + video
+// MADE FOR US — engine (canvas 2D, physics đơn giản, kiểu Mario)
+// Một con đường liền mạch, các pha (this.phase):
+//   walk    : đi bộ nhặt chìa khoá + mũ rồi lên xe
+//   solo    : chạy xe một mình, nhảy qua gạch/gai, nhặt 5 món quà (3 tim), boss "DOUBT"
+//   meeting : gặp cô ấy ở cuối chặng solo → màn bầu trời sao
+//   couple  : xe chở 2 người qua các mốc polaroid, đoạn mưa nhặt ô,
+//             hòm hồng (System Message → lá thư) và hòm quà rơi xuống (video)
 // ============================================================
 
 export const CW = 960;
@@ -155,7 +156,8 @@ export class JourneyGame {
         this.rainMs = ms;
         this.extras.push({ id: "umbrella", label: "Umbrella", x: ms.start + ms.itemAt.x, gap: ms.itemAt.y, collected: false, ms });
       }
-      // trứng vàng: điểm thưởng rải dọc đường, vài quả phải nhảy mới tới
+      // điểm thưởng (id "egg", vẽ bằng assets/props/Egg-Gold.png = hình trái tim) rải dọc
+      // đường, vài cái phải nhảy mới tới
       if (ms.event !== "chest" && ms.event !== "gift") {
         [[250, 40], [520, 130], [790, 60]].forEach(([dx, gap]) => {
           const x = ms.start + dx;
@@ -215,7 +217,6 @@ export class JourneyGame {
     this.player = { x: 40, y: this.groundY - 74, w: 74, h: 74, vx: 0, vy: 0, onGround: true, facing: 1, animT: 0, jumpsLeft: 2, standingOn: null };
     this.score = 0;
     this.timeSolo = 0; // giây, chỉ đếm trong chương 1
-    this.heartsLost = 0;
     this.boss = { active: false, defeated: false, x: 0, dir: -1, speed: 210, dodges: 0, passed: false, hitThisPass: false, t: 0 };
     this.hearts = content.maxHearts;
     this.invuln = 0;
@@ -418,7 +419,6 @@ export class JourneyGame {
   _hurt(dir) {
     const p = this.player;
     this.hearts -= 1;
-    this.heartsLost += 1;
     this.invuln = INVULN_TIME;
     this.shake = 0.35;
     this.hitFlash = 0.3;
@@ -1095,8 +1095,8 @@ function tileMirrored(ctx, image, scrollX, y, targetH, CW) {
   }
 }
 
-// Vẽ cảnh 5 lớp: đáy cảnh chìm dưới mặt đường ~56px để phần đất/đường riêng của
-// cảnh nằm khuất dưới đường nhựa + gạch của game, tránh "hai con đường".
+// Vẽ các lớp parallax của cảnh (xa → gần): đáy cảnh chìm dưới mặt đường (SCENE_SINK) để
+// phần đất/đường riêng của ảnh nền nằm khuất dưới đường nhựa + gạch của game.
 // Cảnh vẽ ở tỉ lệ cố định SCENE_ZOOM (1 px của ảnh 540 cao = SCENE_ZOOM đơn vị thế giới)
 // thay vì kéo cho vừa khung — nền không bị phóng to trên màn hình thường; phần trời phía
 // trên tô bằng màu mép trên của lớp 1. sink tính theo hệ 540px.
@@ -1184,16 +1184,6 @@ function drawRoad(ctx, roadImg, camX, CW, groundY, ch) {
   }
   ctx.fillStyle = "#3a3a3f";
   ctx.fillRect(camX, groundY, CW, ch - groundY);
-}
-
-function roundRect(ctx, x, y, w, h, r) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y, x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r);
-  ctx.arcTo(x, y, x + w, y, r);
-  ctx.closePath();
 }
 
 // Chồng gạch (Block-Brick.png), dự phòng vẽ tay nếu thiếu ảnh

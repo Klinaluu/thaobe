@@ -2,7 +2,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Waterfall&display=swap");
 
 /* ============================================================
-   RIDE TO US — hệ UI "cửa sổ retro" (theo mẫu UI-CoupleData-Panel):
+   MADE FOR US — hệ UI "cửa sổ retro" (theo mẫu UI-CoupleData-Panel):
    viền đen 3px, bevel sáng/tối, thanh tiêu đề pixel, nút vuông có bóng cứng.
    ============================================================ */
 :root {
@@ -132,8 +132,7 @@ button { font-family: var(--font-body); cursor: pointer; }
 .pixel-btn.primary:active { box-shadow: inset 2px 2px 0 #ffb6cf, inset -2px -2px 0 var(--accent-deep), 1px 1px 0 var(--ink); }
 .pixel-btn:disabled { opacity: 0.6; cursor: wait; }
 
-/* ---------------- TITLE / ENDING ----------------
-   Nền = cảnh pixel BG-Sunset / BG-Sea phủ kín + con đường Road-Horizon chạy về chân trời */
+/* ---------------- TITLE / ENDING ---------------- */
 #screen-title, #screen-ending { padding: 20px; overflow-y: auto; }
 .tip-icon { height: 18px; vertical-align: middle; margin-right: 6px; }
 .title-win, .ending-win { max-width: 420px; }
@@ -318,7 +317,6 @@ button { font-family: var(--font-body); cursor: pointer; }
     radial-gradient(2px 2px at 72% 88%, #fff 60%, transparent 62%);
   animation: twinkle 3s ease-in-out infinite alternate;
 }
-.stars-layer.soft { opacity: 0.35; filter: brightness(0.6) sepia(1) hue-rotate(290deg) saturate(3); }
 @keyframes twinkle { from { opacity: 0.55; } to { opacity: 1; } }
 .shooting {
   position: absolute;

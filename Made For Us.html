@@ -135,7 +135,7 @@
 <button id="btn-fullscreen" class="sound-btn fs-btn" aria-label="Full screen">⛶</button>
 <button id="btn-sound" class="sound-btn" aria-label="Sound on">🔊</button>
 
-<!-- nhắc xoay ngang khi cầm iPad dọc -->
+<!-- nhắc xoay ngang khi cầm điện thoại / máy tính bảng dọc (trừ màn mở đầu) -->
 <div id="rotate-overlay">
   <div class="win small">
     <div class="win-bar dark"><span>ROTATE_DEVICE</span><i class="win-x">✕</i></div>
@@ -257,23 +257,23 @@ tui nhớ bạn nhắmm`,
 // ---------- ảnh & video của khách ----------
 // Ảnh polaroid: đặt file vào assets/photos/ rồi điền đường dẫn vào từng mốc bên dưới.
 // Video: đặt file .mp4 vào assets/video/ rồi điền tên vào đây (nên dưới 15MB).
-const VIDEO_SRC = "assets/video/video.mp4"; // đã convert từ video.MOV bằng avconvert (macOS) để phát ổn định trên mọi trình duyệt
-// Nhạc nền: giống bản demo — tự tắt khi phát video, tự nhỏ lại một chút mỗi lần nhảy.
+const VIDEO_SRC = "assets/video/video.mp4"; // khách gửi .MOV → đổi sang .mp4 bằng avconvert
+// Nhạc nền: dùng nhạc chung của game. Tự tắt khi phát video, nhỏ lại một nhịp mỗi lần nhảy.
 const MUSIC_SRC = "assets/audio/bgm.mp3";
 // Ảnh ở màn hình mở đầu (ảnh dọc kiểu photobooth rất hợp). Để "" thì hiện khung trống.
-const TITLE_PHOTO = "assets/characters/Couple-Pose-Happy-01.png"; // sprite 2 nhân vật ôm nhau, thay cho ảnh chụp
+const TITLE_PHOTO = "assets/characters/Couple-Pose-Happy-01.png"; // dùng sprite 2 người ôm nhau thay ảnh chụp
 // true  = luôn vẽ khung ảnh trống kèm chữ hướng dẫn (dùng cho bản demo)
 // false = mốc nào chưa có ảnh thì không treo khung
 const SHOW_EMPTY_PHOTO_FRAMES = false; // bản khách: mốc chưa có ảnh thì không treo khung
 
-// Xe chở đôi chỉ có 1 ảnh (hiệu ứng chạy xe do game tự tạo)
+// Xe chở đôi chỉ có 1 ảnh — game tự thêm hiệu ứng chạy xe (khói, bụi, vệt gió, rung máy)
 const COUPLE_FRAMES = ["assets/characters/Couple-Bike-Side-01.png"];
 
 // ---------- 5 món quà của chặng solo ----------
 // icon: để trống ("") thì game tự vẽ hình thay thế.
 // id giữ nguyên (khớp js/levels.js dùng chung) — chỉ đổi label/icon.
-// Bạn gửi 4 ảnh (2 mèo, máy ảnh, cà phê) nên 4/5 món đổi icon, còn "letter" giữ icon mặc định.
-// TODO xác nhận: thứ tự gán tạm — đổi label/icon dưới đây nếu muốn khác.
+// Khách có 4 món riêng (cà phê, máy ảnh, 2 mèo) → icon trong assets/characters/;
+// món thứ 5 "Letter" giữ icon mặc định của game.
 const GIFTS = [
   { id: "matcha", label: "Coffee", icon: "assets/characters/Item-Coffee-01.png" },
   { id: "chocolate", label: "Camera", icon: "assets/characters/Item-Camera-01.png" },
@@ -291,7 +291,7 @@ const GIFTS = [
 //                "chest" → hòm hồng: System Message → Level Unlocked → lá thư
 //                "gift"  → hòm quà rơi từ trời → video
 // Ba mốc có event là phần kịch bản, nên giữ nguyên thứ tự ở cuối danh sách.
-// Không hiện tên/ngày trên khung polaroid — chỉ để trống khung ảnh theo yêu cầu.
+// Khách không muốn chữ dưới khung ảnh → date/name để "" ở mọi mốc (ô HUD khi đó hiện "Together ♥").
 const MILESTONES = [
   { date: "", name: "", sky: ["#dfe9ff", "#f6c7d8"], photo: "assets/photos/Moc Chou 25_.jpg" },
   { date: "", name: "", sky: ["#3b2a5a", "#b57aa8"], photo: "assets/photos/Anni 1st 25.04.jpg" },
@@ -304,8 +304,6 @@ const MILESTONES = [
   { date: "", name: "", sky: ["#e7d6ea", "#f6d3de"], photo: "assets/photos/You and me.jpg" },
   { date: "", name: "", sky: ["#ffd9e0", "#ffe9d6"], photo: "assets/photos/Love.jpg" },
   {
-    // date/name để trống: 3 mốc này không có ảnh nhưng vẫn hiện lên khung chữ HUD phía trên
-    // khi đi ngang qua, để "DD.MM"/tên demo lộ ra thì lộ ngay trên màn hình cho khách thấy.
     date: "", name: "", sky: ["#7fb7d9", "#cfe7f2"], photo: "",
     event: "rain",
     blocks: [{ x: 300 }, { x: 520, h: 2 }],
@@ -316,13 +314,9 @@ const MILESTONES = [
   { date: "", name: "", sky: ["#bfe0f2", "#e8f3ee"], photo: "", event: "gift" },
 ];
 
-// ---------- nền parallax riêng: lớp xa → gần, tốc độ trôi (1 = cùng tốc độ đường) ----------
-const SCENE_LAYERS = {
-  // Hồ Gươm: trời + mây → dãy nhà + hàng cây (sau tháp) → mặt hồ + Tháp Rùa
-  "ho-guom": { layers: ["L1.png", "L2.png", "L3.png"], speeds: [0.05, 0.16, 0.4] },
-  // Hoàng hôn: trời + mặt trời → skyline + mặt nước → vệt nắng (khoá theo mặt trời)
-  "ho-tay": { layers: ["L1.png", "L2.png", "L3.png"], speeds: [0.02, 0.3, 0.02] },
-};
+// ---------- nền parallax riêng ----------
+// Để trống = nền 3 lớp mặc định của game (xem js/config.js gốc để biết cách khai báo nền riêng).
+const SCENE_LAYERS = {};
 
 return { GAME_TITLE, GAME_SUBTITLE, WINDOW_NAME, TEXT, VIDEO_SRC, MUSIC_SRC, TITLE_PHOTO, SHOW_EMPTY_PHOTO_FRAMES, COUPLE_FRAMES, GIFTS, MILESTONES, SCENE_LAYERS };
 })();
@@ -401,20 +395,25 @@ const PROP_SETS = {
   city: [["grass", 26], ["flowerBlue", 28], ["bushSmall", 34], ["sprout", 26], ["flowers", 28]],
 };
 
-// ---------- nền parallax 2 lớp ----------
-// L1 = trời + cảnh xa (ảnh đục), L2 = cảnh gần (nền trong suốt). Ảnh 3840×1080,
-// mặt đất của cảnh nằm ở y = 380 trong hệ quy chiếu cao 540 → chìm 160px dưới mặt đường.
-const scene = (id) => [`${SCENE}${id}/L1.png`, `${SCENE}${id}/L2.png`];
+// ---------- nền parallax 3 lớp (mặc định cho demo và mọi khách) ----------
+// L1 = trời + cảnh xa (ảnh đục), L2 = cảnh giữa, L3 = cảnh gần (nền trong suốt).
+// Mặt đất của cảnh nằm ở y = 380 trong hệ quy chiếu cao 540 → chìm 160px dưới mặt đường.
+// Khách muốn nền riêng: khai báo SCENE_LAYERS trong config.js (xem ghi chú ở đó).
+const scene = (id) => [1, 2, 3].map((n) => `${SCENE}${id}/L${n}.png`);
 const SCENES = {
-  "ho-guom": scene("ho-guom"), // ban ngày — chặng solo
+  "ho-guom": scene("ho-guom"), // Hồ Gươm ban ngày — đi bộ, solo, gặp nhau
   "ho-tay": scene("ho-tay"), // hoàng hôn — chặng đi đôi
 };
 const SCENE_IDS = Object.keys(SCENES);
-const SCENE_SPEEDS = [0.25, 1.0]; // hệ số trôi của từng lớp so với camera
+// hệ số trôi của từng lớp so với camera (0 = đứng yên, 1 = trôi cùng đường)
+const SCENE_SPEEDS = {
+  "ho-guom": [0.05, 0.16, 0.4],
+  "ho-tay": [0.02, 0.3, 0.02], // lớp gần là vệt nắng — khoá theo mặt trời ở lớp xa
+};
 const SCENE_SINK = Object.fromEntries(SCENE_IDS.map((id) => [id, 160]));
 // Màu mép trên của lớp trời: dùng tô phần trời phía trên ảnh. Ghi sẵn ở đây vì khi
 // chạy trực tiếp từ file:// trình duyệt không cho đọc pixel của ảnh.
-const SCENE_TOP = { "ho-guom": "#bfe0e2", "ho-tay": "#e2620a" };
+const SCENE_TOP = { "ho-guom": "#32bbfa", "ho-tay": "#9264ac" };
 // Cảnh thiên nhiên: bục lơ lửng vẽ bằng bục cỏ, ven đường rải cây cối
 const GRASS_SCENES = ["ho-guom"];
 
@@ -865,9 +864,11 @@ function buildModal(platform, text) {
         <ol class="install-steps">${copy.steps.map((s) => `<li>${s}</li>`).join("")}</ol>
         ${copy.note ? `<p class="install-note">${copy.note}</p>` : ""}
         <button class="pixel-btn primary" data-action data-install-label="${copy.installAction || ""}">${platform === "android" && deferredPrompt && copy.installAction ? copy.installAction : copy.action}</button>
-        <input class="install-link hidden" data-link readonly value="${location.href}">
+        <input class="install-link hidden" data-link readonly>
       </div>
     </div>`;
+  // gán qua thuộc tính, không ghép vào HTML: link có dấu " sẽ không chèn được mã vào trang
+  modal.querySelector("[data-link]").value = location.href;
   return modal;
 }
 
@@ -936,12 +937,13 @@ return { detectPlatform, isInstalled, maybeShowInstallHint, initInstallHint };
 
 const __mod_engine = (() => {
 // ============================================================
-// RIDE TO US — engine (canvas 2D, physics đơn giản, kiểu Mario)
-// Một con đường liền mạch gồm 4 chương:
-//   solo    : nhảy qua chồng gạch, thu thập 5 món quà (có 3 tim)
-//   couple  : xe chở 2 người chạy qua các biển báo địa điểm + polaroid trên trời
-//   chest   : tới chiếc hòm hồng giữa đường, bấm mở
-//   gift    : hòm quà rơi từ trời xuống, bấm mở → thư + video
+// MADE FOR US — engine (canvas 2D, physics đơn giản, kiểu Mario)
+// Một con đường liền mạch, các pha (this.phase):
+//   walk    : đi bộ nhặt chìa khoá + mũ rồi lên xe
+//   solo    : chạy xe một mình, nhảy qua gạch/gai, nhặt 5 món quà (3 tim), boss "DOUBT"
+//   meeting : gặp cô ấy ở cuối chặng solo → màn bầu trời sao
+//   couple  : xe chở 2 người qua các mốc polaroid, đoạn mưa nhặt ô,
+//             hòm hồng (System Message → lá thư) và hòm quà rơi xuống (video)
 // ============================================================
 
 const CW = 960;
@@ -1092,7 +1094,8 @@ class JourneyGame {
         this.rainMs = ms;
         this.extras.push({ id: "umbrella", label: "Umbrella", x: ms.start + ms.itemAt.x, gap: ms.itemAt.y, collected: false, ms });
       }
-      // trứng vàng: điểm thưởng rải dọc đường, vài quả phải nhảy mới tới
+      // điểm thưởng (id "egg", vẽ bằng assets/props/Egg-Gold.png = hình trái tim) rải dọc
+      // đường, vài cái phải nhảy mới tới
       if (ms.event !== "chest" && ms.event !== "gift") {
         [[250, 40], [520, 130], [790, 60]].forEach(([dx, gap]) => {
           const x = ms.start + dx;
@@ -1152,7 +1155,6 @@ class JourneyGame {
     this.player = { x: 40, y: this.groundY - 74, w: 74, h: 74, vx: 0, vy: 0, onGround: true, facing: 1, animT: 0, jumpsLeft: 2, standingOn: null };
     this.score = 0;
     this.timeSolo = 0; // giây, chỉ đếm trong chương 1
-    this.heartsLost = 0;
     this.boss = { active: false, defeated: false, x: 0, dir: -1, speed: 210, dodges: 0, passed: false, hitThisPass: false, t: 0 };
     this.hearts = content.maxHearts;
     this.invuln = 0;
@@ -1355,7 +1357,6 @@ class JourneyGame {
   _hurt(dir) {
     const p = this.player;
     this.hearts -= 1;
-    this.heartsLost += 1;
     this.invuln = INVULN_TIME;
     this.shake = 0.35;
     this.hitFlash = 0.3;
@@ -2032,8 +2033,8 @@ function tileMirrored(ctx, image, scrollX, y, targetH, CW) {
   }
 }
 
-// Vẽ cảnh 5 lớp: đáy cảnh chìm dưới mặt đường ~56px để phần đất/đường riêng của
-// cảnh nằm khuất dưới đường nhựa + gạch của game, tránh "hai con đường".
+// Vẽ các lớp parallax của cảnh (xa → gần): đáy cảnh chìm dưới mặt đường (SCENE_SINK) để
+// phần đất/đường riêng của ảnh nền nằm khuất dưới đường nhựa + gạch của game.
 // Cảnh vẽ ở tỉ lệ cố định SCENE_ZOOM (1 px của ảnh 540 cao = SCENE_ZOOM đơn vị thế giới)
 // thay vì kéo cho vừa khung — nền không bị phóng to trên màn hình thường; phần trời phía
 // trên tô bằng màu mép trên của lớp 1. sink tính theo hệ 540px.
@@ -2121,16 +2122,6 @@ function drawRoad(ctx, roadImg, camX, CW, groundY, ch) {
   }
   ctx.fillStyle = "#3a3a3f";
   ctx.fillRect(camX, groundY, CW, ch - groundY);
-}
-
-function roundRect(ctx, x, y, w, h, r) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y, x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r);
-  ctx.arcTo(x, y, x + w, y, r);
-  ctx.closePath();
 }
 
 // Chồng gạch (Block-Brick.png), dự phòng vẽ tay nếu thiếu ảnh
@@ -2638,7 +2629,7 @@ const {JourneyGame} = __mod_engine;
 const COUPLE_MILESTONES = MILESTONES.map((ms) => ({ ...ms, terrain: COUPLE_TERRAIN }));
 
 // Nền parallax: khách có thể khai báo số lớp + tốc độ riêng từng cảnh trong config.js
-// (SCENE_LAYERS), không khai báo thì dùng bộ 2 lớp mặc định của assets.js.
+// (SCENE_LAYERS), không khai báo thì dùng bộ 3 lớp mặc định của assets.js.
 const CUSTOM_SCENES = SCENE_LAYERS || {};
 const SCENE_PATHS = Object.fromEntries(
   Object.keys(SCENES).map((id) => {
@@ -2647,7 +2638,7 @@ const SCENE_PATHS = Object.fromEntries(
   })
 );
 const SCENE_SPEEDS_BY_ID = Object.fromEntries(
-  Object.keys(SCENES).map((id) => [id, (CUSTOM_SCENES[id] && CUSTOM_SCENES[id].speeds) || SCENE_SPEEDS])
+  Object.keys(SCENES).map((id) => [id, (CUSTOM_SCENES[id] && CUSTOM_SCENES[id].speeds) || SCENE_SPEEDS[id]])
 );
 
 // Khung hình xe chở đôi: khách khai báo riêng (vd chỉ 1 ảnh) hoặc dùng bộ mặc định
@@ -2797,13 +2788,24 @@ function hudSoloMode() {
   renderScore(0);
   $("hud-time").textContent = "0:00";
 }
+// chữ ngày/tên do khách viết: dựng bằng textContent để "<3" hay ký tự đặc biệt không vỡ HTML
+function renderMilestoneLabel(ms) {
+  const el = $("hud-milestone");
+  if (!ms.date && !ms.name) {
+    el.textContent = "Together ♥";
+    return;
+  }
+  const date = document.createElement("b");
+  date.textContent = ms.date;
+  el.replaceChildren(date, document.createTextNode(ms.name));
+}
 function hudCoupleMode() {
   $("hud-hearts").classList.add("hidden");
   $("hud-items").classList.add("hidden");
   $("hud-milestone").classList.remove("hidden");
   $("hud-portrait").classList.remove("hidden");
   $("hud-stats").classList.remove("hidden");
-  $("hud-milestone").innerHTML = "Together ♥";
+  $("hud-milestone").textContent = "Together ♥";
   renderBar(0);
 }
 
@@ -2868,7 +2870,7 @@ function startJourney() {
           return;
         }
         // mốc không ghi ngày/tên (vd bản khách bỏ chú thích) thì giữ dòng "Together", không để trống ô HUD
-        $("hud-milestone").innerHTML = ms.date || ms.name ? `<b>${ms.date}</b>${ms.name}` : "Together ♥";
+        renderMilestoneLabel(ms);
         renderBar((j / COUPLE_MILESTONES.length) * 100);
         if (ms.event === "rain") showHint("It's raining! Jump the walls and grab the umbrella", 3600);
       },
@@ -3073,7 +3075,7 @@ function wireUI() {
   });
   $("btn-unlock-continue").addEventListener("click", () => {
     showScreen("screen-level");
-    $("hud-milestone").innerHTML = "Level 2 · unlocked ♥";
+    $("hud-milestone").textContent = "Level 2 · unlocked ♥";
     openEnvelope();
   });
 
@@ -3082,7 +3084,7 @@ function wireUI() {
     openLetter(false);
   });
   $("letter-close").addEventListener("click", () => hideModal("modal-letter"));
-  // đọc thư xong (ở Sa Pa) → đi tiếp tới Hoàn Kiếm, hòm video sẽ rơi xuống ở đó
+  // đọc thư xong → đi tiếp tới mốc cuối, hòm video sẽ rơi xuống ở đó
   $("btn-watch-video").addEventListener("click", () => {
     hideModal("modal-letter");
     currentGame && currentGame.resumeJourney();

@@ -71,19 +71,24 @@ export const PROP_SETS = {
   city: [["grass", 26], ["flowerBlue", 28], ["bushSmall", 34], ["sprout", 26], ["flowers", 28]],
 };
 
-// ---------- nền parallax 2 lớp ----------
-// L1 = trời + cảnh xa (ảnh đục), L2 = cảnh gần (nền trong suốt). Ảnh 3840×1080,
-// mặt đất của cảnh nằm ở y = 380 trong hệ quy chiếu cao 540 → chìm 160px dưới mặt đường.
-const scene = (id) => [`${SCENE}${id}/L1.png`, `${SCENE}${id}/L2.png`];
+// ---------- nền parallax 3 lớp (mặc định cho demo và mọi khách) ----------
+// L1 = trời + cảnh xa (ảnh đục), L2 = cảnh giữa, L3 = cảnh gần (nền trong suốt).
+// Mặt đất của cảnh nằm ở y = 380 trong hệ quy chiếu cao 540 → chìm 160px dưới mặt đường.
+// Khách muốn nền riêng: khai báo SCENE_LAYERS trong config.js (xem ghi chú ở đó).
+const scene = (id) => [1, 2, 3].map((n) => `${SCENE}${id}/L${n}.png`);
 export const SCENES = {
-  "ho-guom": scene("ho-guom"), // ban ngày — chặng solo
+  "ho-guom": scene("ho-guom"), // Hồ Gươm ban ngày — đi bộ, solo, gặp nhau
   "ho-tay": scene("ho-tay"), // hoàng hôn — chặng đi đôi
 };
 export const SCENE_IDS = Object.keys(SCENES);
-export const SCENE_SPEEDS = [0.25, 1.0]; // hệ số trôi của từng lớp so với camera
+// hệ số trôi của từng lớp so với camera (0 = đứng yên, 1 = trôi cùng đường)
+export const SCENE_SPEEDS = {
+  "ho-guom": [0.05, 0.16, 0.4],
+  "ho-tay": [0.02, 0.3, 0.02], // lớp gần là vệt nắng — khoá theo mặt trời ở lớp xa
+};
 export const SCENE_SINK = Object.fromEntries(SCENE_IDS.map((id) => [id, 160]));
 // Màu mép trên của lớp trời: dùng tô phần trời phía trên ảnh. Ghi sẵn ở đây vì khi
 // chạy trực tiếp từ file:// trình duyệt không cho đọc pixel của ảnh.
-export const SCENE_TOP = { "ho-guom": "#bfe0e2", "ho-tay": "#e2620a" };
+export const SCENE_TOP = { "ho-guom": "#32bbfa", "ho-tay": "#9264ac" };
 // Cảnh thiên nhiên: bục lơ lửng vẽ bằng bục cỏ, ven đường rải cây cối
 export const GRASS_SCENES = ["ho-guom"];
