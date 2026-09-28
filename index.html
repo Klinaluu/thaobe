@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Made For Us">
+<meta name="theme-color" content="#ff6fa0">
+<title>Made For Us</title>
+<meta name="description" content="Game pixel-art kỷ niệm cho hai người: đi qua từng cột mốc, mở lá thư và đoạn video của riêng bạn.">
+
+<!-- Ảnh hiện khi gửi link (Zalo, Messenger, Facebook, iMessage…).
+     og:image phải là đường dẫn tuyệt đối; đổi tên miền ở đây nếu chuyển chỗ đặt. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Made For Us">
+<meta property="og:title" content="Made For Us — Our love journey">
+<meta property="og:description" content="Game pixel-art kỷ niệm cho hai người: đi qua từng cột mốc, mở lá thư và đoạn video của riêng bạn.">
+<meta property="og:url" content="https://klinaluu.github.io/thaobe/">
+<meta property="og:image" content="https://klinaluu.github.io/thaobe/assets/preview.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Cửa sổ pixel MADE FOR US kèm logo trái tim">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Made For Us — Our love journey">
+<meta name="twitter:description" content="Game pixel-art kỷ niệm cho hai người: đi qua từng cột mốc, mở lá thư và đoạn video của riêng bạn.">
+<meta name="twitter:image" content="https://klinaluu.github.io/thaobe/assets/preview.png">
+
+<link rel="icon" type="image/svg+xml" href="assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/brand/favicon-16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="assets/brand/favicon-48.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/brand/apple-touch-icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ============ TITLE ============ -->
+  <section id="screen-title" class="screen active pink-bg">
+    <div class="win title-win">
+      <div class="win-bar"><span id="title-window-name">MADE_FOR_US.EXE</span><i class="win-x">✕</i></div>
+      <div class="win-body title-card">
+        <h1 id="title-heading" class="game-title">MADE FOR US</h1>
+        <p id="title-subtitle" class="game-subtitle">Our love journey</p>
+        <div id="title-photo-frame" class="title-hero frame">(insert pictures here)</div>
+        <button id="btn-start" class="pixel-btn primary">▶ Start the journey</button>
+        <div class="title-tip"><img class="tip-icon" src="assets/characters/Item-Key-Helmet-01.png" alt="">◀ ▶ move · ▲ jump · ▲▲ double jump · F full screen</div>
+        <div class="title-tip">🎮 gamepad: stick / D-pad to move · A to jump</div>
+        <div id="title-rotate-tip" class="title-tip tip-plain touch-only">⟳ Hold your device sideways to play</div>
+        <button id="title-install-tip" class="title-tip tip-link touch-only">+ Add to Home Screen — play full screen</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GAME ============ -->
+  <section id="screen-level" class="screen">
+    <div class="canvas-wrap">
+      <canvas id="game-canvas" width="960" height="360"></canvas>
+    </div>
+    <div class="level-top-ui">
+      <header class="hud">
+        <div id="hud-hearts" class="hud-hearts"></div>
+        <div id="hud-items" class="hud-items"></div>
+        <div id="hud-milestone" class="hud-milestone hidden"></div>
+        <div id="hud-stats" class="hud-stats"><span id="hud-score">00000</span><span id="hud-time">0:00</span></div>
+        <img id="hud-portrait" class="hud-portrait hidden" src="assets/characters/Portrait-Woman-01.png" alt="">
+        <img id="hud-bar" class="hud-bar" src="assets/ui/Bar-0.png" alt="">
+      </header>
+    </div>
+    <div id="hud-hint" class="hud-hint hidden"></div>
+    <div id="bubble-man" class="speech-bubble hidden"></div>
+    <div class="level-bottom-ui">
+      <div class="controls-hint"><span class="hint-kb">◀ ▶ move · ▲ jump · ▲▲ double jump · tap to open</span><span class="hint-touch">hold ◀ ▶ to move · tap ▲ to jump · tap ▲ twice to jump higher</span></div>
+      <div class="touch-controls">
+        <div class="pad-left">
+          <button id="btn-left" class="touch-btn">◀</button>
+          <button id="btn-right" class="touch-btn">▶</button>
+        </div>
+        <div class="pad-right">
+          <button id="btn-jump" class="touch-btn jump">▲</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MEET (stars) ============ -->
+  <section id="screen-meet" class="screen night">
+    <div class="stars-layer"></div>
+    <div class="shooting a"></div>
+    <div class="shooting b"></div>
+    <div class="shooting c"></div>
+    <div class="meet-content">
+      <img class="meet-couple" src="assets/characters/Couple-Pose-Happy-01.png" alt="">
+      <p id="meet-text" class="meet-text"></p>
+      <div id="meet-stats" class="meet-stats"></div>
+      <button id="btn-meet-continue" class="pixel-btn primary">Continue ▸</button>
+    </div>
+  </section>
+
+  <!-- ============ UNLOCK ============ -->
+  <section id="screen-unlock" class="screen night">
+    <div class="stars-layer"></div>
+    <div class="unlock-content">
+      <div class="padlock">
+        <div class="shackle"></div>
+        <div class="lock-body"><div class="keyhole"></div></div>
+      </div>
+      <div class="unlock-title">Level Unlocked</div>
+      <button id="btn-unlock-continue" class="pixel-btn primary">Continue ▸</button>
+    </div>
+  </section>
+
+  <!-- ============ ENDING ============ -->
+  <section id="screen-ending" class="screen pink-bg">
+    <div class="win ending-win">
+      <div class="win-bar"><span>Completed</span><i class="win-x">✕</i></div>
+      <div class="win-body ending-content">
+        <img class="ending-couple" src="assets/characters/Scene-Terrace-Bike-Iso-01.png" alt="">
+        <button id="btn-play-again" class="pixel-btn primary">▶ Play again</button>
+        <div class="ending-sub">— or watch again —</div>
+        <div class="ending-row">
+          <button id="btn-ending-letter" class="pixel-btn">💌 Love letter</button>
+          <button id="btn-ending-video" class="pixel-btn">🎬 Little movie</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<button id="btn-fullscreen" class="sound-btn fs-btn" aria-label="Full screen">⛶</button>
+<button id="btn-sound" class="sound-btn" aria-label="Sound on">🔊</button>
+
+<!-- nhắc xoay ngang khi cầm iPad dọc -->
+<div id="rotate-overlay">
+  <div class="win small">
+    <div class="win-bar dark"><span>ROTATE_DEVICE</span><i class="win-x">✕</i></div>
+    <div class="win-body">
+      <div class="rotate-icon">⟳</div>
+      <div id="rotate-title" class="box-title">Please rotate to landscape</div>
+      <div id="rotate-text" class="box-text">This journey is best enjoyed sideways.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODALS (cửa sổ retro) ============ -->
+<div id="modal-gameover" class="modal hidden">
+  <div class="win small">
+    <div class="win-bar danger"><span>GAME_OVER</span><i class="win-x">✕</i></div>
+    <div class="win-body">
+      <div class="box-title">Out of hearts!</div>
+      <div class="box-text">The gifts you found are safe. Try that stretch again.</div>
+      <button id="btn-retry" class="pixel-btn primary">↻ Try again</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-system" class="modal hidden">
+  <div class="win system">
+    <div class="win-bar dark"><span>⚠ SYSTEM MESSAGE</span><i class="win-x">✕</i></div>
+    <div class="win-body">
+      <div id="system-text" class="system-text"></div>
+      <div id="system-reply" class="system-reply"></div>
+      <div class="system-buttons">
+        <button id="btn-sys-maybe" class="pixel-btn">Maybe</button>
+        <button id="btn-sys-yes" class="pixel-btn primary">Definitely!</button>
+        <button id="btn-sys-stop" class="pixel-btn">Stop!</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modal-envelope" class="modal hidden">
+  <div class="win envelope-win">
+    <div class="win-bar"><span>INCOMING_MAIL</span><i class="win-x">✕</i></div>
+    <div class="win-body">
+      <div class="envelope">
+        <div class="envelope-flap"></div>
+        <div class="envelope-stamp">CONFIDENTIAL</div>
+        <div id="envelope-label" class="envelope-label"></div>
+      </div>
+      <button id="btn-open-letter" class="pixel-btn primary">Read ➜</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-letter" class="modal hidden">
+  <div class="win letter-win">
+    <div class="win-bar"><span id="letter-window-name">Your love letter</span><button id="letter-close" class="win-x btn hidden">✕</button></div>
+    <div class="win-body letter-body">
+      <img class="letter-scene" src="assets/characters/Scene-Terrace-Sitting-Iso-01.png" alt="">
+      <pre id="letter-text" class="letter-text"></pre>
+      <button id="btn-watch-video" class="pixel-btn primary">🎬 Watch the little movie</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-video" class="modal hidden">
+  <div class="win video-win">
+    <div class="win-bar dark"><span>LITTLE_MOVIE.MP4</span><i class="win-x">✕</i></div>
+    <div class="win-body video-body">
+      <video id="video-player" controls playsinline preload="metadata"></video>
+      <div id="video-missing" class="box-text hidden">Wait for your video 🎬</div>
+      <button id="btn-video-done" class="pixel-btn primary">Continue ▸</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,721 @@
+@charset "UTF-8";
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Waterfall&display=swap");
+
+/* ============================================================
+   RIDE TO US — hệ UI "cửa sổ retro" (theo mẫu UI-CoupleData-Panel):
+   viền đen 3px, bevel sáng/tối, thanh tiêu đề pixel, nút vuông có bóng cứng.
+   ============================================================ */
+:root {
+  --bg: #fff3f6;
+  --ink: #2b2030;
+  --ink-soft: #6b3f52;
+  --ink-dim: #a97a92;
+  --paper: #fff7fa;
+  --paper-2: #ffe4ee;
+  --bevel-hi: #ffffff;
+  --bevel-lo: #d98bb0;
+  --accent: #ff6fa0;
+  --accent-deep: #e0538a;
+  --gold: #f2c94c;
+  --good: #45b57c;
+  --bad: #e8615f;
+  --night1: #1b1638;
+  --night2: #4a2b5e;
+  --font-title: "Press Start 2P", monospace;
+  --font-body: "Be Vietnam Pro", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg);
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+#screen-level { touch-action: none; }
+.letter-text { -webkit-user-select: text; user-select: text; }
+.hint-touch, .touch-only { display: none; }
+img { image-rendering: pixelated; image-rendering: crisp-edges; }
+button { font-family: var(--font-body); cursor: pointer; }
+.hidden { display: none !important; }
+
+#app { position: relative; width: 100%; height: 100%; }
+.screen {
+  display: none;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+}
+.screen.active { display: flex; }
+
+/* ---------------- CỬA SỔ RETRO ---------------- */
+.win {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  box-shadow:
+    inset 3px 3px 0 var(--bevel-hi),
+    inset -3px -3px 0 var(--bevel-lo),
+    6px 6px 0 rgba(43, 32, 48, 0.35);
+  animation: pop-in 0.22s ease-out;
+}
+@keyframes pop-in { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.win-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 3px 3px 0;
+  padding: 8px 10px;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-title);
+  font-size: 10px;
+  letter-spacing: 1px;
+  border-bottom: 3px solid var(--ink);
+  text-shadow: 2px 2px 0 rgba(43, 32, 48, 0.4);
+}
+.win-bar.dark { background: #3b2a5a; }
+.win-bar.danger { background: var(--bad); }
+.win-x {
+  font-style: normal;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 12px;
+  flex: 0 0 auto;
+}
+.win-x.btn { cursor: pointer; padding: 0; }
+.win-x.btn:active { transform: translate(1px, 1px); }
+.win-body { padding: 20px 22px 22px; text-align: center; }
+.win.small { max-width: 340px; }
+
+/* ---------------- NÚT ---------------- */
+.pixel-btn {
+  font-family: var(--font-title);
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  line-height: 1.4;
+  padding: 12px 18px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  border-radius: 0;
+  box-shadow: inset 2px 2px 0 var(--bevel-hi), inset -2px -2px 0 var(--bevel-lo), 4px 4px 0 var(--ink);
+  transition: transform 0.06s ease, box-shadow 0.06s ease;
+}
+.pixel-btn:active { transform: translate(3px, 3px); box-shadow: inset 2px 2px 0 var(--bevel-hi), inset -2px -2px 0 var(--bevel-lo), 1px 1px 0 var(--ink); }
+.pixel-btn.primary { background: var(--accent); color: #fff; text-shadow: 2px 2px 0 rgba(43,32,48,0.35); box-shadow: inset 2px 2px 0 #ffb6cf, inset -2px -2px 0 var(--accent-deep), 4px 4px 0 var(--ink); }
+.pixel-btn.primary:active { box-shadow: inset 2px 2px 0 #ffb6cf, inset -2px -2px 0 var(--accent-deep), 1px 1px 0 var(--ink); }
+.pixel-btn:disabled { opacity: 0.6; cursor: wait; }
+
+/* ---------------- TITLE / ENDING ----------------
+   Nền = cảnh pixel BG-Sunset / BG-Sea phủ kín + con đường Road-Horizon chạy về chân trời */
+#screen-title, #screen-ending { padding: 20px; overflow-y: auto; }
+.tip-icon { height: 18px; vertical-align: middle; margin-right: 6px; }
+.title-win, .ending-win { max-width: 420px; }
+.title-card { padding: 22px 22px 18px; }
+.game-title {
+  font-family: var(--font-title);
+  font-size: clamp(22px, 5.6vw, 34px);
+  color: var(--accent);
+  text-shadow: 3px 3px 0 #fff, 6px 6px 0 var(--ink);
+  -webkit-text-stroke: 1px var(--ink);
+  margin: 6px 0 12px;
+  letter-spacing: 2px;
+}
+.game-subtitle { color: var(--ink-dim); margin: 0 0 16px; font-size: 14px; }
+.title-hero { width: 170px; filter: drop-shadow(4px 4px 0 rgba(43,32,48,0.25)); margin-bottom: 18px; }
+.title-tip.tip-plain { font-family: var(--font-body); font-size: 12px; letter-spacing: 0; }
+.title-tip { margin-top: 14px; font-family: var(--font-title); font-size: 8px; color: var(--ink-dim); letter-spacing: 0.5px; }
+
+.ending-win { max-width: 480px; }
+.ending-content { padding: 18px 22px 22px; }
+.ending-couple { display: block; width: min(300px, 70vw); margin: 0 auto 10px; filter: drop-shadow(4px 4px 0 rgba(43,32,48,0.25)); }
+.ending-sub { color: var(--ink-dim); font-size: 12px; margin: 12px 0 8px; }
+.ending-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+/* ---------------- GAME (full màn hình) ---------------- */
+#screen-level { background: #000; overflow: hidden; }
+.canvas-wrap { position: absolute; inset: 0; }
+#game-canvas { width: 100%; height: 100%; display: block; object-fit: cover; image-rendering: pixelated; background: #000; }
+
+.level-top-ui { position: absolute; top: 0; left: 0; right: 0; z-index: 5; }
+.hud {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 7px 12px;
+  padding-top: max(7px, env(safe-area-inset-top));
+  /* nằm ngang trên iPhone: tai thỏ nằm bên trái → đẩy tim vào trong */
+  padding-left: max(12px, env(safe-area-inset-left));
+  padding-right: max(92px, calc(env(safe-area-inset-right) + 92px));
+  background: rgba(255, 247, 250, 0.9);
+  border-bottom: 3px solid var(--ink);
+  box-shadow: inset 0 -3px 0 var(--bevel-lo), inset 0 3px 0 var(--bevel-hi);
+}
+.hud-hearts { display: flex; gap: 3px; flex: 0 0 auto; }
+.hud-hearts img { width: 28px; height: 22px; }
+.hud-items { display: flex; gap: 6px; flex: 1; justify-content: center; }
+.hud-slot {
+  width: 34px;
+  height: 34px;
+  background: var(--paper-2);
+  border: 2px solid var(--ink);
+  box-shadow: inset 2px 2px 0 rgba(43,32,48,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.55;
+  filter: grayscale(1);
+  transition: transform 0.25s ease, opacity 0.25s ease, filter 0.25s ease;
+}
+.hud-slot img { width: 24px; height: 24px; object-fit: contain; }
+.hud-slot .lip { width: 8px; height: 22px; background: linear-gradient(180deg, #e0538a 0 45%, #3a2a3d 45%); }
+.hud-slot.got { opacity: 1; filter: none; background: #fff; box-shadow: inset 2px 2px 0 var(--bevel-hi), inset -2px -2px 0 var(--bevel-lo), 0 0 0 2px var(--accent); transform: scale(1.1); }
+.hud-milestone { flex: 1; text-align: center; font-family: var(--font-body); font-weight: 600; font-size: 12px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.5px; }
+.hud-milestone b { color: var(--accent-deep); margin-right: 10px; font-family: var(--font-title); font-size: 9px; }
+.hud-portrait { width: 34px; height: 31px; border: 2px solid var(--ink); background: #cfd8e3; flex: 0 0 auto; object-fit: cover; }
+.hud-bar { height: 22px; width: auto; flex: 0 0 auto; }
+
+.hud-hint {
+  position: absolute;
+  left: 50%;
+  top: 72px;
+  transform: translateX(-50%);
+  z-index: 6;
+  background: var(--ink);
+  color: #fff;
+  font-family: var(--font-title);
+  font-size: 9px;
+  padding: 10px 14px;
+  border: 3px solid #fff;
+  box-shadow: 4px 4px 0 rgba(43,32,48,0.4);
+  white-space: nowrap;
+  animation: pop-in 0.2s ease-out;
+}
+
+.speech-bubble {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  transform: translate(-50%, -100%);
+  z-index: 6;
+  background: #fff;
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  box-shadow: 4px 4px 0 rgba(43,32,48,0.3);
+  padding: 10px 14px;
+  font-family: var(--font-title);
+  font-size: 10px;
+  white-space: nowrap;
+  animation: pop 0.25s ease-out;
+}
+.speech-bubble::after {
+  content: "";
+  position: absolute;
+  left: 28%;
+  bottom: -14px;
+  border: 7px solid transparent;
+  border-top-color: var(--ink);
+}
+@keyframes pop { from { transform: translate(-50%, -100%) scale(0.6); opacity: 0; } to { transform: translate(-50%, -100%) scale(1); opacity: 1; } }
+
+.level-bottom-ui {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.controls-hint {
+  text-align: center;
+  color: #fff;
+  font-family: var(--font-title);
+  font-size: 8px;
+  padding: 6px 10px;
+  background: rgba(43, 32, 48, 0.6);
+  border: 2px solid rgba(255,255,255,0.35);
+  margin-bottom: 8px;
+}
+/* bố cục tay cầm cho mọi thiết bị: ▲ nhảy bên TRÁI, ◀ ▶ bên PHẢI */
+.touch-controls {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+  padding: 0 max(16px, env(safe-area-inset-left)) max(14px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-right));
+}
+.pad-left, .pad-right { display: flex; gap: 12px; }
+.controls-hint { position: absolute; bottom: 88px; left: 50%; transform: translateX(-50%); margin: 0; white-space: nowrap; }
+.touch-btn {
+  width: 52px;
+  height: 52px;
+  /* bán trong suốt: vẫn thấy nhân vật và cảnh phía sau nút */
+  background: rgba(255, 247, 250, 0.45);
+  border: 3px solid rgba(43, 32, 48, 0.55);
+  box-shadow: 2px 2px 0 rgba(43, 32, 48, 0.22);
+  color: rgba(43, 32, 48, 0.75);
+  font-size: 20px;
+  touch-action: manipulation;
+  user-select: none;
+}
+.touch-btn:active { background: var(--accent); color: #fff; border-color: var(--ink); transform: translate(2px, 2px); box-shadow: 1px 1px 0 rgba(43,32,48,0.45); }
+.touch-btn.jump { width: 68px; height: 68px; font-size: 24px; background: rgba(255, 143, 184, 0.5); color: rgba(255, 255, 255, 0.95); }
+.touch-btn.jump:active { background: var(--accent-deep); }
+
+/* ---------------- BẦU TRỜI SAO (gặp nhau, mở khoá, nền title) ---------------- */
+.screen.night {
+  background: linear-gradient(180deg, var(--night1) 0%, var(--night2) 100%);
+  color: #fff;
+  overflow: hidden;
+}
+.stars-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(2px 2px at 12% 18%, #fff 60%, transparent 62%),
+    radial-gradient(2px 2px at 28% 62%, #fff 60%, transparent 62%),
+    radial-gradient(3px 3px at 41% 30%, #fff 60%, transparent 62%),
+    radial-gradient(2px 2px at 57% 12%, #fff 60%, transparent 62%),
+    radial-gradient(2px 2px at 66% 48%, #fff 60%, transparent 62%),
+    radial-gradient(3px 3px at 78% 26%, #fff 60%, transparent 62%),
+    radial-gradient(2px 2px at 88% 70%, #fff 60%, transparent 62%),
+    radial-gradient(2px 2px at 20% 84%, #fff 60%, transparent 62%),
+    radial-gradient(2px 2px at 50% 76%, #fff 60%, transparent 62%),
+    radial-gradient(3px 3px at 93% 40%, #fff 60%, transparent 62%),
+    radial-gradient(2px 2px at 8% 50%, #fff 60%, transparent 62%),
+    radial-gradient(2px 2px at 36% 6%, #fff 60%, transparent 62%),
+    radial-gradient(2px 2px at 72% 88%, #fff 60%, transparent 62%);
+  animation: twinkle 3s ease-in-out infinite alternate;
+}
+.stars-layer.soft { opacity: 0.35; filter: brightness(0.6) sepia(1) hue-rotate(290deg) saturate(3); }
+@keyframes twinkle { from { opacity: 0.55; } to { opacity: 1; } }
+.shooting {
+  position: absolute;
+  width: 220px;
+  height: 3px;
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, #fff 100%);
+  transform: rotate(-32deg);
+  opacity: 0;
+  animation: shoot 5s linear infinite;
+  filter: drop-shadow(0 0 6px #fff);
+}
+.shooting.a { top: 12%; left: 70%; animation-delay: 0.4s; }
+.shooting.b { top: 30%; left: 85%; animation-delay: 2.1s; }
+.shooting.c { top: 6%; left: 40%; animation-delay: 3.6s; }
+@keyframes shoot {
+  0% { transform: translate(0, 0) rotate(-32deg); opacity: 0; }
+  4% { opacity: 1; }
+  18% { transform: translate(-420px, 260px) rotate(-32deg); opacity: 0; }
+  100% { transform: translate(-420px, 260px) rotate(-32deg); opacity: 0; }
+}
+.meet-content, .unlock-content { position: relative; z-index: 1; text-align: center; padding: 24px; max-width: 560px; }
+.meet-couple { width: min(220px, 48vw); filter: drop-shadow(0 12px 22px rgba(0,0,0,0.45)); margin-bottom: 14px; animation: rise 0.9s ease-out; }
+@keyframes rise { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.meet-text {
+  font-family: var(--font-title);
+  font-size: clamp(11px, 2.6vw, 16px);
+  line-height: 1.9;
+  color: #fff;
+  text-shadow: 0 0 14px rgba(255, 182, 207, 0.8), 3px 3px 0 rgba(0,0,0,0.5);
+  margin: 0 0 24px;
+  animation: rise 1.2s ease-out;
+}
+.screen.night .pixel-btn { box-shadow: inset 2px 2px 0 #ffb6cf, inset -2px -2px 0 var(--accent-deep), 4px 4px 0 rgba(0,0,0,0.6); }
+
+.padlock { width: 110px; height: 130px; margin: 0 auto 22px; position: relative; }
+.shackle {
+  position: absolute;
+  left: 25px;
+  top: 0;
+  width: 60px;
+  height: 64px;
+  border: 12px solid var(--gold);
+  border-bottom: none;
+  border-radius: 40px 40px 0 0;
+  transform-origin: 12px 100%;
+  animation: unlock 1.1s ease-out 0.6s forwards;
+}
+@keyframes unlock { 0% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-16px) rotate(0); } 100% { transform: translateY(-16px) rotate(-40deg); } }
+.lock-body {
+  position: absolute;
+  left: 0;
+  top: 56px;
+  width: 110px;
+  height: 74px;
+  background: var(--accent);
+  border: 4px solid var(--ink);
+  box-shadow: inset 4px 4px 0 #ffb6cf, inset -4px -4px 0 var(--accent-deep), 6px 6px 0 var(--ink);
+}
+.keyhole { position: absolute; left: 47px; top: 20px; width: 12px; height: 12px; background: var(--ink); }
+.keyhole::after { content: ""; position: absolute; left: 3px; top: 8px; width: 6px; height: 14px; background: var(--ink); }
+.unlock-title {
+  font-family: var(--font-title);
+  font-size: clamp(16px, 4vw, 26px);
+  color: #fff;
+  text-shadow: 0 0 18px rgba(255, 111, 160, 0.9), 4px 4px 0 var(--ink);
+  margin-bottom: 26px;
+  opacity: 0;
+  animation: rise 0.7s ease-out 1.5s forwards;
+}
+#btn-unlock-continue { opacity: 0; animation: rise 0.6s ease-out 2s forwards; }
+
+/* ---------------- MODALS ---------------- */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(30, 15, 25, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 16px;
+}
+.modal .win { max-height: 92vh; display: flex; flex-direction: column; }
+.modal .win-body { overflow-y: auto; min-height: 0; }
+.box-title { font-family: var(--font-title); font-size: 13px; color: var(--accent-deep); margin-bottom: 12px; }
+.box-text { color: var(--ink-dim); font-size: 14px; margin-bottom: 16px; line-height: 1.5; }
+
+.win.system { background: #1f1a2e; --bevel-hi: #4a3f66; --bevel-lo: #0f0b18; color: #e9e2f2; }
+.win.system .win-body { text-align: left; }
+.system-text { white-space: pre-line; font-family: "Menlo", "Consolas", monospace; font-size: 14px; line-height: 1.7; margin-bottom: 10px; }
+.system-text::before { content: "> "; color: var(--gold); }
+.system-reply { min-height: 22px; color: #ffb6cf; font-family: "Menlo", "Consolas", monospace; font-size: 13px; margin-bottom: 14px; }
+.system-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+.system-buttons .pixel-btn { flex: 1; font-size: 9px; padding: 10px 8px; }
+.win.system .pixel-btn { background: #2d2542; color: #e9e2f2; box-shadow: inset 2px 2px 0 #4a3f66, inset -2px -2px 0 #0f0b18, 4px 4px 0 #000; }
+.win.system .pixel-btn.primary { background: var(--accent); color: #fff; box-shadow: inset 2px 2px 0 #ffb6cf, inset -2px -2px 0 var(--accent-deep), 4px 4px 0 #000; }
+.shake { animation: shake 0.4s ease; }
+@keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+
+.envelope-win { max-width: 400px; }
+.envelope {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  background: #fff8ea;
+  border: 3px solid var(--ink);
+  box-shadow: inset 3px 3px 0 #fff, inset -3px -3px 0 #d9c2a3;
+  margin-bottom: 18px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 16px;
+}
+.envelope-flap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 55%;
+  background: #f3e6cf;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+.envelope-flap::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 100%; clip-path: polygon(0 0, 100% 0, 50% 100%); background: linear-gradient(180deg, transparent 0 calc(100% - 4px), var(--ink) calc(100% - 4px)); opacity: 0.4; }
+.envelope-stamp {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  transform: rotate(12deg);
+  border: 3px solid var(--bad);
+  color: var(--bad);
+  font-family: var(--font-title);
+  font-size: 9px;
+  padding: 6px 8px;
+  letter-spacing: 1px;
+  opacity: 0.85;
+}
+.envelope-label { position: relative; font-family: var(--font-title); font-size: clamp(9px, 2.2vw, 12px); color: #5c3a2a; letter-spacing: 1px; line-height: 1.7; }
+
+.letter-win { max-width: 520px; }
+.letter-body { background: #fff8ea; color: #4a3728; padding: 18px 24px 26px; }
+.letter-scene { width: min(240px, 60vw); margin: 0 auto 14px; display: block; filter: drop-shadow(3px 3px 0 rgba(43,32,48,0.2)); }
+/* thư viết tay: font Waterfall (có dấu tiếng Việt) trên giấy kẻ dòng */
+.letter-text {
+  white-space: pre-wrap;
+  font-family: "Waterfall", "Segoe Print", "Bradley Hand", cursive;
+  font-size: 33px;
+  line-height: 36px;
+  color: #3a2a1e;
+  -webkit-text-stroke: 0.3px #3a2a1e;
+  margin: 0 0 20px;
+  padding: 0 6px;
+  text-align: left;
+  background-image: repeating-linear-gradient(180deg, transparent 0 35px, rgba(120, 90, 60, 0.18) 35px 36px);
+  background-attachment: local;
+}
+.letter-text::first-line { font-size: 40px; color: var(--accent-deep); -webkit-text-stroke: 0.4px var(--accent-deep); }
+
+.video-win { max-width: 720px; background: #1b1638; --bevel-hi: #4a3f66; --bevel-lo: #0f0b18; }
+.video-body { padding: 14px; }
+#video-player { width: 100%; max-height: 64vh; background: #000; margin-bottom: 14px; display: block; border: 3px solid var(--ink); }
+.video-win .box-text { color: #d9cbe6; }
+
+/* ---------------- MÀN HÌNH THẤP ---------------- */
+@media (max-height: 480px) {
+  .hud { padding: 4px 10px; }
+  .controls-hint { display: none; }
+  .touch-controls { padding-bottom: 6px; }
+  .touch-btn { width: 40px; height: 40px; font-size: 15px; }
+  .touch-btn.jump { width: 50px; height: 50px; font-size: 18px; }
+  #screen-title, #screen-ending, .screen.night { justify-content: flex-start; padding-top: 12px; }
+  .title-card { padding: 10px; }
+  .title-hero { width: 100px; margin-bottom: 8px; }
+  .game-title { text-shadow: 2px 2px 0 #fff, 3px 3px 0 var(--ink); }
+  .meet-content, .unlock-content { padding: 12px 16px; }
+  .meet-couple { display: block; width: auto; height: min(70px, 18vh); max-width: 45vw; margin: 0 auto 8px; }
+  .ending-couple { width: 120px; }
+  .meet-text { margin: 0 0 12px; }
+  .meet-stats { margin: -4px 0 10px; }
+  .padlock { transform: scale(0.7); margin-bottom: 0; }
+  .modal .win-body { padding: 12px 16px 16px; }
+  .envelope-win { max-width: 230px; }
+  .envelope { margin-bottom: 8px; padding-bottom: 8px; }
+  .envelope-stamp { font-size: 7px; padding: 4px 6px; top: 6px; right: 8px; }
+  .envelope-label { font-size: 8px; line-height: 1.4; }
+  .letter-scene { width: min(120px, 30vw); margin-bottom: 8px; }
+}
+
+/* ---------------- ĐIỂM & ĐỒNG HỒ ---------------- */
+.hud-stats { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; font-family: var(--font-title); font-size: 9px; color: var(--ink); flex: 0 0 auto; line-height: 1; }
+.hud-stats #hud-score::before { content: "\2605  "; color: var(--gold); }
+.hud-stats #hud-time { color: var(--ink-dim); }
+.meet-stats { font-family: var(--font-title); font-size: 9px; line-height: 2; color: #cfc4e6; margin: -10px 0 20px; letter-spacing: 0.5px; animation: rise 1.4s ease-out; }
+.meet-stats b { color: var(--gold); }
+@media (max-width: 480px) { .hud-stats { display: none; } }
+
+/* ============================================================
+   iPAD / MÁY CẢM ỨNG — bố cục tay cầm: ◀ ▶ bên trái, ▲ nhảy bên phải,
+   nút to hơn, ẩn gợi ý bàn phím, cửa sổ rộng hơn trên màn tablet.
+   ============================================================ */
+@media (hover: none) and (pointer: coarse) {
+  .hint-kb { display: none; }
+  .hint-touch { display: inline; }
+  .touch-only { display: block; }
+  .controls-hint { bottom: 96px; }
+  .touch-btn { width: 52px; height: 52px; font-size: 19px; }
+  .touch-btn.jump { width: 64px; height: 64px; font-size: 23px; }
+}
+
+/* Tablet nằm ngang (iPad): cửa sổ và chữ rộng/to hơn cho vừa màn 1024–1366px */
+@media (min-width: 900px) and (orientation: landscape) {
+  .win { max-width: 560px; }
+  .win.small { max-width: 420px; }
+  .title-win, .ending-win { max-width: 520px; }
+  .letter-win { max-width: 680px; }
+  .video-win { max-width: 900px; }
+  .win-bar { font-size: 12px; padding: 10px 12px; }
+  .pixel-btn { font-size: 12px; padding: 14px 22px; }
+  .box-title { font-size: 15px; }
+  .box-text { font-size: 16px; }
+  .game-title { font-size: 40px; }
+  .title-hero { width: 210px; }
+  .ending-couple { width: 340px; }
+  .meet-text { font-size: 17px; }
+  .meet-couple { width: 260px; }
+  .unlock-title { font-size: 28px; }
+  .hud { padding: 9px 16px; gap: 18px; }
+  .hud-hearts img { width: 34px; height: 27px; }
+  .hud-slot { width: 40px; height: 40px; }
+  .hud-slot img { width: 28px; height: 28px; }
+  .hud-milestone { font-size: 13px; }
+  .hud-stats { font-size: 10px; }
+  .hud-bar { height: 26px; }
+  .hud-hint { font-size: 11px; top: 84px; }
+  .speech-bubble { font-size: 12px; }
+  .letter-text { font-size: 36px; line-height: 40px; background-image: repeating-linear-gradient(180deg, transparent 0 39px, rgba(120, 90, 60, 0.18) 39px 40px); }
+  .letter-text::first-line { font-size: 44px; }
+}
+
+/* Cầm tablet dọc: nhắc xoay ngang */
+#rotate-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: linear-gradient(180deg, var(--night1) 0%, var(--night2) 100%);
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.rotate-icon { font-size: 56px; color: var(--accent); margin-bottom: 10px; animation: spin-hint 2.4s ease-in-out infinite; display: inline-block; }
+@keyframes spin-hint { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(90deg); } }
+/* điện thoại lẫn máy tính bảng: cầm dọc thì nhắc xoay ngang */
+@media (orientation: portrait) and (hover: none) {
+  #rotate-overlay { display: flex; }
+}
+
+/* nút bật/tắt âm thanh — góc trên phải, nổi trên mọi màn hình */
+.sound-btn {
+  position: fixed;
+  top: max(6px, env(safe-area-inset-top));
+  right: max(8px, env(safe-area-inset-right));
+  z-index: 60;
+  width: 34px;
+  height: 30px;
+  padding: 0;
+  font-size: 15px;
+  line-height: 1;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  box-shadow: inset 1px 1px 0 var(--bevel-hi), inset -1px -1px 0 var(--bevel-lo), 2px 2px 0 var(--ink);
+  cursor: pointer;
+}
+.sound-btn:active { transform: translate(1px, 1px); box-shadow: inset 1px 1px 0 var(--bevel-hi), inset -1px -1px 0 var(--bevel-lo), 1px 1px 0 var(--ink); }
+/* nút toàn màn hình đứng cạnh nút âm thanh; chừa chỗ ở góc phải HUD */
+.sound-btn.fs-btn { right: max(48px, calc(env(safe-area-inset-right) + 40px)); font-size: 16px; }
+.hud { padding-right: 92px; }
+
+/* màn hình start: nền hồng kẻ ô pixel nhẹ */
+.pink-bg {
+  background-color: var(--accent);
+  background-image:
+    linear-gradient(rgba(255,255,255,0.09) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(255,255,255,0.09) 2px, transparent 2px);
+  background-size: 28px 28px;
+}
+
+
+/* khung ảnh trống ở màn hình start (bản demo) */
+.title-hero.frame {
+  width: min(230px, 58%);
+  aspect-ratio: 4 / 3;
+  height: auto;
+  max-height: 26vh;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 12px;
+  font-family: var(--font-title);
+  font-size: 9px;
+  line-height: 1.8;
+  color: var(--accent-deep);
+  background: var(--paper-2);
+  border: 3px dashed var(--ink);
+  box-shadow: 5px 5px 0 var(--ink);
+}
+
+/* ảnh thật ở màn hình start (bản cá nhân hoá) — khung trắng viền cứng, giữ nguyên tỉ lệ */
+.title-hero.photo {
+  width: fit-content;
+  max-width: 82%;
+  margin: 0 auto 16px;
+  padding: 5px;
+  background: #fff;
+  border: 3px solid var(--ink);
+  box-shadow: 5px 5px 0 var(--ink);
+  filter: none;
+}
+.title-hero.photo img { display: block; width: auto; height: auto; max-width: 100%; max-height: min(34vh, 280px); }
+@media (max-height: 520px) { .title-hero.photo img { max-height: 30vh; } }
+
+/* hướng dẫn thêm vào màn hình chính — dùng font thường vì font pixel không có dấu */
+.install-heading {
+  font-family: var(--font-body);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--accent-deep);
+  margin-bottom: 12px;
+}
+.install-steps {
+  margin: 0 0 16px;
+  padding-left: 22px;
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+.install-steps li + li { margin-top: 6px; }
+.install-note {
+  margin: -6px 0 14px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-dim);
+}
+.install-link {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 9px 10px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--ink-soft);
+  background: #fff;
+  border: 2px solid var(--ink);
+}
+/* nút trong hộp thoại này dùng font thường cho đọc được dấu tiếng Việt */
+#modal-install .pixel-btn { font-family: var(--font-body); font-size: 14px; font-weight: 700; letter-spacing: 0; padding: 11px 20px; }
+.tip-link {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 12px;
+  letter-spacing: 0;
+  margin-left: auto;
+  margin-right: auto;
+  background: none;
+  border: 0;
+  padding: 6px 4px 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Điện thoại nằm ngang: màn rất thấp nên nút phải nhỏ, nhường chỗ cho nhân vật */
+@media (hover: none) and (max-height: 480px) {
+  .touch-btn { width: 42px; height: 42px; font-size: 16px; border-width: 2px; }
+  .touch-btn.jump { width: 52px; height: 52px; font-size: 19px; }
+  .touch-controls { padding-bottom: max(8px, env(safe-area-inset-bottom)); }
+}
+
+/* Màn hình nằm ngang thấp (iPhone): thu gọn cửa sổ tiêu đề cho vừa, không bị cắt đáy */
+@media (max-height: 520px) and (orientation: landscape) {
+  #screen-title, #screen-ending { padding: 10px 10px max(10px, env(safe-area-inset-bottom)); }
+  .hud { padding-left: max(18px, calc(env(safe-area-inset-left) + 8px)); }
+  .title-win, .ending-win { max-width: 600px; }
+  .title-card { padding: 8px 18px 10px; }
+  .game-title { font-size: clamp(15px, 2.4vw, 20px); margin: 0 0 8px; letter-spacing: 1px; text-shadow: 2px 2px 0 #fff, 3px 3px 0 var(--ink); }
+  .game-subtitle { font-size: 11px; margin-bottom: 10px; }
+  .title-hero.frame { width: auto; height: clamp(96px, 32vh, 140px); max-height: none; font-size: 7px; line-height: 1.8; margin-bottom: 10px; padding: 8px; }
+  .title-hero.photo img { max-height: 36vh; }
+  img.title-hero.photo { height: min(36vh, 200px); width: auto; }
+  .title-card .pixel-btn { font-size: 9px; padding: 8px 13px; }
+  .title-tip { margin-top: 4px; font-size: 6px; }
+  .tip-link { font-size: 10px; padding: 4px 4px 0; }
+  .title-tip.tip-plain { font-size: 10px; }
+  .ending-couple { width: min(220px, 40%); }
+  .ending-content { padding: 10px 18px 14px; }
+}
