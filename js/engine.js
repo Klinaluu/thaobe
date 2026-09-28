@@ -210,6 +210,7 @@ export class JourneyGame {
     this._milestoneIndex = -1;
     this._hintShown = false;
     this._wasAirborne = false;
+    this._wasInRain = false;
 
     this._bindInput();
   }
@@ -754,8 +755,11 @@ export class JourneyGame {
     {
       const um = this.extras.find((e) => e.id === "umbrella");
       const inRain = this.rainMs && um && !um.collected && p.x + p.w / 2 >= this.rainMs.start - 60 && p.x < this.rainMs.start + SEG_W;
+      if (inRain && !this._wasInRain && this.cb.onThunder) this.cb.onThunder(); // sấm báo hiệu lúc vừa vào mốc mưa
+      this._wasInRain = inRain;
       const target = inRain ? 1 : 0;
       this.rain += (target - this.rain) * Math.min(1, dt * 1.5);
+      if (this.cb.onRain) this.cb.onRain(this.rain);
     }
 
     this.prompt = null;

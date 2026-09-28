@@ -499,8 +499,8 @@ return { MAX_HEARTS, SOLO_SEG_W, WALK_TERRAIN, BOSS_TERRAIN, MEET_TERRAIN, COUPL
 })();
 
 const __mod_audio = (() => {
-// Hiệu ứng âm thanh chiptune sinh bằng WebAudio — không cần file mp3.
-// SFX: nhảy / nhảy đôi / bấm nút. (Không có nhạc nền theo yêu cầu.)
+// Hiệu ứng âm thanh chiptune sinh bằng WebAudio (nhảy / nhảy đôi / bấm nút / sấm / mưa)
+// — không cần file. Nhạc nền thì phát từ file mp3 riêng (xem MUSIC_SRC ở config.js).
 
 let ctx = null;
 let master = null;
@@ -538,6 +538,55 @@ function setMuted(m) {
     /* ignore */
   }
   if (master) master.gain.setTargetAtTime(muted ? 0 : 1, ctx.currentTime, 0.02);
+  fadeMusicTo(targetMusicVolume(), 200);
+}
+
+// ---------- Nhạc nền (file mp3, phát song song với hiệu ứng WebAudio ở trên) ----------
+let musicEl = null;
+let musicDucked = false; // true trong lúc đang phát video, để tự tắt nhạc nền
+const MUSIC_VOLUME = 0.35; // giữ nhỏ hơn hiệu ứng để tiếng nhảy luôn nổi lên trên nhạc
+let musicFadeTimer = null;
+
+function targetMusicVolume() {
+  return muted || musicDucked ? 0 : MUSIC_VOLUME;
+}
+function fadeMusicTo(target, ms) {
+  if (!musicEl) return;
+  clearInterval(musicFadeTimer);
+  const start = musicEl.volume;
+  const t0 = performance.now();
+  musicFadeTimer = setInterval(() => {
+    const k = Math.min(1, (performance.now() - t0) / ms);
+    musicEl.volume = start + (target - start) * k;
+    if (k >= 1) clearInterval(musicFadeTimer);
+  }, 40);
+}
+
+function initMusic(src) {
+  if (musicEl || !src) return;
+  musicEl = new Audio(src);
+  musicEl.loop = true;
+  musicEl.preload = "auto";
+  musicEl.volume = 0;
+}
+
+function playMusic() {
+  if (!musicEl) return;
+  musicEl.play().then(() => fadeMusicTo(targetMusicVolume(), 1500)).catch(() => {});
+}
+
+// gọi khi màn hình video mở (on = true) / đóng hoặc dừng phát (on = false)
+function duckMusicForVideo(on) {
+  musicDucked = on;
+  fadeMusicTo(targetMusicVolume(), 400);
+}
+
+// nhấn nhỏ nhạc nền một nhịp mỗi lần nhảy, để tiếng "nhảy" luôn nghe rõ chứ không bị nhạc lấp
+function duckMusicBriefly() {
+  if (!musicEl || muted || musicDucked) return;
+  clearInterval(musicFadeTimer);
+  musicEl.volume = MUSIC_VOLUME * 0.35;
+  fadeMusicTo(MUSIC_VOLUME, 260);
 }
 
 function tone(type, f0, f1, t0, dur, gain, dest) {
@@ -562,18 +611,81 @@ function sfx(name) {
   switch (name) {
     case "jump":
       tone("square", 320, 720, t, 0.14, 0.12);
+      duckMusicBriefly();
       break;
     case "jump2":
       tone("square", 480, 1100, t, 0.16, 0.12);
       tone("triangle", 240, 520, t, 0.16, 0.08);
+      duckMusicBriefly();
       break;
     case "click":
       tone("square", 880, 880, t, 0.045, 0.1);
       tone("square", 1320, 1320, t + 0.05, 0.07, 0.09);
       break;
+    case "thunder": {
+      // rền trầm kéo dài
+      const o = ctx.createOscillator();
+      o.type = "sine";
+      o.frequency.setValueAtTime(95, t);
+      o.frequency.exponentialRampToValueAtTime(32, t + 1.1);
+      const og = ctx.createGain();
+      og.gain.setValueAtTime(0.0001, t);
+      og.gain.exponentialRampToValueAtTime(0.55, t + 0.06);
+      og.gain.exponentialRampToValueAtTime(0.0001, t + 1.2);
+      o.connect(og);
+      og.connect(master);
+      o.start(t);
+      o.stop(t + 1.3);
+      // tiếng "rắc" ở đầu tiếng sét
+      const n = ctx.createBufferSource();
+      n.buffer = getNoiseBuffer();
+      const nf = ctx.createBiquadFilter();
+      nf.type = "lowpass";
+      nf.frequency.value = 1000;
+      const ng = ctx.createGain();
+      ng.gain.setValueAtTime(0.45, t);
+      ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
+      n.connect(nf);
+      nf.connect(ng);
+      ng.connect(master);
+      n.start(t);
+      n.stop(t + 0.35);
+      break;
+    }
     default:
       break;
   }
+}
+
+// ---------- Mưa: tiếng nền liên tục, âm lượng theo cường độ 0..1 từ engine ----------
+let noiseBuffer = null;
+function getNoiseBuffer() {
+  if (noiseBuffer) return noiseBuffer;
+  const len = ctx.sampleRate * 2;
+  noiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+  const data = noiseBuffer.getChannelData(0);
+  for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+  return noiseBuffer;
+}
+let rainGain = null;
+function setRainIntensity(k) {
+  if (!ctx) return;
+  if (!rainGain) {
+    const src = ctx.createBufferSource();
+    src.buffer = getNoiseBuffer();
+    src.loop = true;
+    const filter = ctx.createBiquadFilter();
+    filter.type = "bandpass";
+    filter.frequency.value = 1600;
+    filter.Q.value = 0.5;
+    rainGain = ctx.createGain();
+    rainGain.gain.value = 0;
+    src.connect(filter);
+    filter.connect(rainGain);
+    rainGain.connect(master);
+    src.start();
+  }
+  rainGain.gain.setTargetAtTime(Math.max(0, Math.min(1, k)) * 0.25, ctx.currentTime, 0.4);
 }
 
 // mức tín hiệu hiện tại (RMS) — dùng để kiểm tra nhanh trong console
@@ -592,7 +704,7 @@ function level() {
   return Math.sqrt(s / buf.length);
 }
 
-return { initAudio, isMuted, setMuted, sfx, level };
+return { initAudio, isMuted, setMuted, initMusic, playMusic, duckMusicForVideo, sfx, setRainIntensity, level };
 })();
 
 const __mod_install = (() => {
@@ -607,7 +719,10 @@ const __mod_install = (() => {
 // Máy tính không hiện gì (đã có nút toàn màn hình).
 // ============================================================
 
-const SEEN_KEY = "mfu-install-hint";
+// path riêng cho từng site: GitHub Pages phục vụ mọi bản (demo lẫn từng khách)
+// dưới cùng một origin "klinaluu.github.io", nên nếu chỉ khoá theo tên biến thì
+// hễ đã xem trên 1 bản là mọi bản khác (khác /<slug>/) cũng bị coi là "đã xem".
+const SEEN_KEY = "mfu-install-hint:" + location.pathname;
 const SEEN_DAYS = 7;
 
 // Trình duyệt nhúng trong các app nhắn tin / mạng xã hội
@@ -996,6 +1111,7 @@ class JourneyGame {
     this._milestoneIndex = -1;
     this._hintShown = false;
     this._wasAirborne = false;
+    this._wasInRain = false;
 
     this._bindInput();
   }
@@ -1540,8 +1656,11 @@ class JourneyGame {
     {
       const um = this.extras.find((e) => e.id === "umbrella");
       const inRain = this.rainMs && um && !um.collected && p.x + p.w / 2 >= this.rainMs.start - 60 && p.x < this.rainMs.start + SEG_W;
+      if (inRain && !this._wasInRain && this.cb.onThunder) this.cb.onThunder(); // sấm báo hiệu lúc vừa vào mốc mưa
+      this._wasInRain = inRain;
       const target = inRain ? 1 : 0;
       this.rain += (target - this.rain) * Math.min(1, dt * 1.5);
+      if (this.cb.onRain) this.cb.onRain(this.rain);
     }
 
     this.prompt = null;
@@ -2405,10 +2524,10 @@ const __mod_main = (() => {
 // ============================================================
 // Điều phối màn hình, HUD, âm thanh, điều khiển và các đoạn cắt cảnh.
 // ============================================================
-const {GAME_TITLE, GAME_SUBTITLE, WINDOW_NAME, TEXT, GIFTS, MILESTONES, VIDEO_SRC, TITLE_PHOTO, SHOW_EMPTY_PHOTO_FRAMES, SCENE_LAYERS,} = __mod_config;
+const {GAME_TITLE, GAME_SUBTITLE, WINDOW_NAME, TEXT, GIFTS, MILESTONES, VIDEO_SRC, MUSIC_SRC, TITLE_PHOTO, SHOW_EMPTY_PHOTO_FRAMES, SCENE_LAYERS,} = __mod_config;
 const {IMG, PROPS, PROP_SETS, SCENES, SCENE_SPEEDS, SCENE_SINK, SCENE_TOP, GRASS_SCENES} = __mod_assets;
 const {SOLO_SEGMENTS, SOLO_SEG_W, MAX_HEARTS, WALK_TERRAIN, BOSS_TERRAIN, MEET_TERRAIN, COUPLE_TERRAIN,} = __mod_levels;
-const {initAudio, sfx, setMuted, isMuted} = __mod_audio;
+const {initAudio, sfx, setMuted, isMuted, initMusic, playMusic, duckMusicForVideo, setRainIntensity} = __mod_audio;
 const {initInstallHint, maybeShowInstallHint, detectPlatform, isInstalled} = __mod_install;
 const {JourneyGame} = __mod_engine;
 
@@ -2647,6 +2766,8 @@ function startJourney() {
         if (ms.event === "rain") showHint("It's raining! Jump the walls and grab the umbrella ☂", 3600);
       },
       onExtra: (ex) => { if (ex.id === "umbrella") showHint("Rain's over — let's keep going ♥", 2600); },
+      onThunder: () => sfx("thunder"),
+      onRain: (k) => setRainIntensity(k),
       onChest: () => openSystemMessage(),
       onGift: () => openVideo(false),
       onScore: (n) => renderScore(n),
@@ -2664,6 +2785,7 @@ function startJourney() {
   // Cờ gỡ lỗi: mở trang với #debug để truy cập ván chơi từ console (window.__game)
   if (location.hash.includes("debug")) window.__game = currentGame;
   initAudio();
+  playMusic();
   clearInterval(timeTimer);
   timeTimer = setInterval(() => {
     if (currentGame && currentGame.phase === "solo") $("hud-time").textContent = fmtTime(currentGame.timeSolo);
@@ -2998,6 +3120,7 @@ async function init() {
   applyBranding();
   wireUI();
   initInstallHint({ text: TEXT.install });
+  initMusic(MUSIC_SRC);
   const startBtn = $("btn-start");
   startBtn.textContent = "Loading…";
   startBtn.disabled = true;

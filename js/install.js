@@ -9,7 +9,10 @@
 // Máy tính không hiện gì (đã có nút toàn màn hình).
 // ============================================================
 
-const SEEN_KEY = "mfu-install-hint";
+// path riêng cho từng site: GitHub Pages phục vụ mọi bản (demo lẫn từng khách)
+// dưới cùng một origin "klinaluu.github.io", nên nếu chỉ khoá theo tên biến thì
+// hễ đã xem trên 1 bản là mọi bản khác (khác /<slug>/) cũng bị coi là "đã xem".
+const SEEN_KEY = "mfu-install-hint:" + location.pathname;
 const SEEN_DAYS = 7;
 
 // Trình duyệt nhúng trong các app nhắn tin / mạng xã hội
