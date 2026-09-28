@@ -1061,19 +1061,35 @@ class JourneyGame {
     });
 
     // cảnh vật ven đường: rải ngẫu nhiên (cố định theo đoạn), tránh gai/khối/quà
+    // VÀ tránh chồng tán lên cây/hoa khác đã đặt trước đó, để không bị dồn cụm.
     this.props = [];
     const sets = content.propSets || {};
+    const propImg = images.props || {};
     const seeded = (n) => { let t = n * 9301 + 49297; return () => { t = (t * 9301 + 49297) % 233280; return t / 233280; }; };
     const avoid = [[180, 480], [520, 720], ...this.solids.map((s) => [s.x - 40, s.x + s.w + 40]), ...this.spikes.map((sp) => [sp.x - 30, sp.x + sp.w + 30]), ...this.items.map((it) => [it.x - 50, it.x + 90]), ...this.extras.map((e) => [e.x - 50, e.x + 90])];
+    // bề ngang thật của prop (theo tỉ lệ ảnh gốc đã tải), dùng để canh khoảng hở —
+    // cây to (tán rộng) cần khoảng cách xa hơn bụi cỏ/hoa nhỏ mới không đè lên nhau
+    const propHalfW = (name, h) => {
+      const im = propImg[name];
+      const ratio = im && im.naturalHeight ? im.naturalWidth / im.naturalHeight : 1;
+      return (h * ratio) / 2;
+    };
+    const PROP_GAP = 18; // khoảng hở tối thiểu thêm giữa 2 tán, ngoài phần bề ngang của chính nó
     const scatter = (start, width, terrain, seed, density) => {
       const set = isGrass(terrain) ? sets.nature : sets.city;
       if (!set || !set.length) return;
       const rnd = seeded(seed);
       for (let i = 0; i < density; i++) {
-        const x = start + 40 + rnd() * (width - 120);
-        if (avoid.some(([a, b]) => x > a && x < b)) continue;
-        const [name, h] = set[Math.floor(rnd() * set.length)];
-        this.props.push({ name, x, h, flip: rnd() < 0.5 });
+        for (let attempt = 0; attempt < 16; attempt++) {
+          const x = start + 40 + rnd() * (width - 120);
+          if (avoid.some(([a, b]) => x > a && x < b)) continue;
+          const [name, h] = set[Math.floor(rnd() * set.length)];
+          const halfW = propHalfW(name, h);
+          const crowded = this.props.some((pr) => Math.abs(pr.x - x) < halfW + propHalfW(pr.name, pr.h) + PROP_GAP);
+          if (crowded) continue;
+          this.props.push({ name, x, h, flip: rnd() < 0.5 });
+          break;
+        }
       }
     };
     scatter(0, WALK_PAD + START_PAD, content.walkTerrain, 7, 5);
