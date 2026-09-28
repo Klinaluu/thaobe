@@ -48,8 +48,8 @@
         <p id="title-subtitle" class="game-subtitle">Our love journey</p>
         <div id="title-photo-frame" class="title-hero frame">(insert pictures here)</div>
         <button id="btn-start" class="pixel-btn primary">▶ Start the journey</button>
-        <div class="title-tip"><img class="tip-icon" src="assets/characters/Item-Key-Helmet-01.png" alt="">◀ ▶ move · ▲ jump · ▲▲ double jump · F full screen</div>
-        <div class="title-tip">🎮 gamepad: stick / D-pad to move · A to jump</div>
+        <div class="title-tip kb-only"><img class="tip-icon" src="assets/characters/Item-Key-Helmet-01.png" alt="">◀ ▶ move · ▲ jump · ▲▲ double jump · F full screen</div>
+        <div class="title-tip kb-only">🎮 gamepad: stick / D-pad to move · A to jump</div>
         <div id="title-rotate-tip" class="title-tip tip-plain touch-only">⟳ Hold your device sideways to play</div>
         <button id="title-install-tip" class="title-tip tip-link touch-only">+ Add to Home Screen — play full screen</button>
       </div>
@@ -1829,7 +1829,7 @@ class JourneyGame {
     }
     // Cảnh có xe máy (một mình hoặc đi đôi) vẽ to hơn nhân vật đi bộ, vẫn neo bánh xe xuống đất
     const bikeScene = this.phase !== "walk";
-    drawPlayer(ctx, this.player, sprite, 0, blink, this.groundY, bikeScene ? 100 : undefined, bikeScene ? 16 : 0);
+    drawPlayer(ctx, this.player, sprite, 0, blink, this.groundY, bikeScene ? 100 : undefined, bikeScene ? 2 : 0);
 
     for (const pt of this.particles) {
       ctx.globalAlpha = Math.max(0, Math.min(1, pt.life / 0.3));
@@ -1956,16 +1956,19 @@ function tileMirrored(ctx, image, scrollX, y, targetH, CW) {
   const tileW = image.width * scale;
   const period = tileW * 2;
   const start = -(((scrollX % period) + period) % period);
+  // toạ độ lẻ làm chỗ nối 2 ô hở nửa pixel → lộ vệt dọc màu trời; làm tròn và đè 1px
   for (let dx = start; dx < CW + tileW; dx += tileW) {
     const idx = Math.round((dx - start) / tileW);
+    const x0 = Math.floor(dx);
+    const w = Math.ceil(dx + tileW) - x0 + 1;
     if (idx % 2 === 1) {
       ctx.save();
-      ctx.translate(dx + tileW, y);
+      ctx.translate(x0 + w, y);
       ctx.scale(-1, 1);
-      ctx.drawImage(image, 0, 0, tileW, targetH);
+      ctx.drawImage(image, 0, 0, w, targetH);
       ctx.restore();
     } else {
-      ctx.drawImage(image, dx, y, tileW, targetH);
+      ctx.drawImage(image, x0, y, w, targetH);
     }
   }
 }
@@ -2785,9 +2788,10 @@ function startJourney() {
           renderBar(100);
           return;
         }
-        $("hud-milestone").innerHTML = `<b>${ms.date}</b>${ms.name}`;
+        // mốc không ghi ngày/tên (vd bản khách bỏ chú thích) thì giữ dòng "Together", không để trống ô HUD
+        $("hud-milestone").innerHTML = ms.date || ms.name ? `<b>${ms.date}</b>${ms.name}` : "Together ♥";
         renderBar((j / COUPLE_MILESTONES.length) * 100);
-        if (ms.event === "rain") showHint("It's raining! Jump the walls and grab the umbrella ☂", 3600);
+        if (ms.event === "rain") showHint("It's raining! Jump the walls and grab the umbrella", 3600);
       },
       onExtra: (ex) => { if (ex.id === "umbrella") showHint("Rain's over — let's keep going ♥", 2600); },
       onThunder: () => sfx("thunder"),
@@ -2830,7 +2834,7 @@ function playMeeting() {
     bubble.classList.add("hidden");
     $("meet-text").textContent = TEXT.meetText;
     $("meet-stats").innerHTML =
-      `MISSION COMPLETE<br>score <b>${g.score}</b> · time <b>${fmtTime(g.timeSolo)}</b> · hearts lost <b>${g.heartsLost}</b>`;
+      `MISSION COMPLETE<br>score <b>${g.score}</b> · time <b>${fmtTime(g.timeSolo)}</b> · gifts <b>${GIFTS.length}/${GIFTS.length}</b>`;
     showScreen("screen-meet");
   }, 1900);
 }
@@ -3003,7 +3007,7 @@ function wireUI() {
   $("btn-watch-video").addEventListener("click", () => {
     hideModal("modal-letter");
     currentGame && currentGame.resumeJourney();
-    showHint("One more stop — ride on to Hoàn Kiếm ♥", 3000);
+    showHint("One more stop — keep riding ♥", 3000);
   });
   $("video-player").addEventListener("error", () => {
     $("video-player").classList.add("hidden");

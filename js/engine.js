@@ -926,7 +926,7 @@ export class JourneyGame {
     }
     // Cảnh có xe máy (một mình hoặc đi đôi) vẽ to hơn nhân vật đi bộ, vẫn neo bánh xe xuống đất
     const bikeScene = this.phase !== "walk";
-    drawPlayer(ctx, this.player, sprite, 0, blink, this.groundY, bikeScene ? 100 : undefined, bikeScene ? 16 : 0);
+    drawPlayer(ctx, this.player, sprite, 0, blink, this.groundY, bikeScene ? 100 : undefined, bikeScene ? 2 : 0);
 
     for (const pt of this.particles) {
       ctx.globalAlpha = Math.max(0, Math.min(1, pt.life / 0.3));
@@ -1053,16 +1053,19 @@ function tileMirrored(ctx, image, scrollX, y, targetH, CW) {
   const tileW = image.width * scale;
   const period = tileW * 2;
   const start = -(((scrollX % period) + period) % period);
+  // toạ độ lẻ làm chỗ nối 2 ô hở nửa pixel → lộ vệt dọc màu trời; làm tròn và đè 1px
   for (let dx = start; dx < CW + tileW; dx += tileW) {
     const idx = Math.round((dx - start) / tileW);
+    const x0 = Math.floor(dx);
+    const w = Math.ceil(dx + tileW) - x0 + 1;
     if (idx % 2 === 1) {
       ctx.save();
-      ctx.translate(dx + tileW, y);
+      ctx.translate(x0 + w, y);
       ctx.scale(-1, 1);
-      ctx.drawImage(image, 0, 0, tileW, targetH);
+      ctx.drawImage(image, 0, 0, w, targetH);
       ctx.restore();
     } else {
-      ctx.drawImage(image, dx, y, tileW, targetH);
+      ctx.drawImage(image, x0, y, w, targetH);
     }
   }
 }

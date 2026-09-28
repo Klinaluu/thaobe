@@ -243,9 +243,10 @@ function startJourney() {
           renderBar(100);
           return;
         }
-        $("hud-milestone").innerHTML = `<b>${ms.date}</b>${ms.name}`;
+        // mốc không ghi ngày/tên (vd bản khách bỏ chú thích) thì giữ dòng "Together", không để trống ô HUD
+        $("hud-milestone").innerHTML = ms.date || ms.name ? `<b>${ms.date}</b>${ms.name}` : "Together ♥";
         renderBar((j / COUPLE_MILESTONES.length) * 100);
-        if (ms.event === "rain") showHint("It's raining! Jump the walls and grab the umbrella ☂", 3600);
+        if (ms.event === "rain") showHint("It's raining! Jump the walls and grab the umbrella", 3600);
       },
       onExtra: (ex) => { if (ex.id === "umbrella") showHint("Rain's over — let's keep going ♥", 2600); },
       onThunder: () => sfx("thunder"),
@@ -288,7 +289,7 @@ function playMeeting() {
     bubble.classList.add("hidden");
     $("meet-text").textContent = TEXT.meetText;
     $("meet-stats").innerHTML =
-      `MISSION COMPLETE<br>score <b>${g.score}</b> · time <b>${fmtTime(g.timeSolo)}</b> · hearts lost <b>${g.heartsLost}</b>`;
+      `MISSION COMPLETE<br>score <b>${g.score}</b> · time <b>${fmtTime(g.timeSolo)}</b> · gifts <b>${GIFTS.length}/${GIFTS.length}</b>`;
     showScreen("screen-meet");
   }, 1900);
 }
@@ -461,7 +462,7 @@ function wireUI() {
   $("btn-watch-video").addEventListener("click", () => {
     hideModal("modal-letter");
     currentGame && currentGame.resumeJourney();
-    showHint("One more stop — ride on to Hoàn Kiếm ♥", 3000);
+    showHint("One more stop — keep riding ♥", 3000);
   });
   $("video-player").addEventListener("error", () => {
     $("video-player").classList.add("hidden");
