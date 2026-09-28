@@ -332,6 +332,7 @@ function openVideo(fromEnding) {
 function closeVideo() {
   const video = $("video-player");
   video.pause();
+  duckMusicForVideo(false);
   video.removeAttribute("src");
   video.load();
   hideModal("modal-video");
@@ -466,6 +467,10 @@ function wireUI() {
     $("video-player").classList.add("hidden");
     $("video-missing").classList.remove("hidden");
   });
+  // tự tắt nhạc nền lúc video đang chạy, bật lại khi dừng/hết/đóng màn hình video
+  $("video-player").addEventListener("play", () => duckMusicForVideo(true));
+  $("video-player").addEventListener("pause", () => duckMusicForVideo(false));
+  $("video-player").addEventListener("ended", () => duckMusicForVideo(false));
   $("btn-video-done").addEventListener("click", () => {
     const fromEnding = $("btn-video-done").dataset.fromEnding === "1";
     closeVideo();

@@ -104,3 +104,5 @@ export const SCENE_LAYERS = {
   // Hoàng hôn: trời + mặt trời → skyline + mặt nước → vệt nắng (khoá theo mặt trời)
   "ho-tay": { layers: ["L1.png", "L2.png", "L3.png"], speeds: [0.02, 0.3, 0.02] },
 };
+
+export const MUSIC_SRC = ""; // de trong = khong co nhac nen (nhu VIDEO_SRC)

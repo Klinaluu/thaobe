@@ -319,7 +319,9 @@ const SCENE_LAYERS = {
   "ho-tay": { layers: ["L1.png", "L2.png", "L3.png"], speeds: [0.02, 0.3, 0.02] },
 };
 
-return { GAME_TITLE, GAME_SUBTITLE, WINDOW_NAME, TEXT, VIDEO_SRC, TITLE_PHOTO, SHOW_EMPTY_PHOTO_FRAMES, GIFTS, MILESTONES, SCENE_LAYERS };
+const MUSIC_SRC = ""; // de trong = khong co nhac nen (nhu VIDEO_SRC)
+
+return { GAME_TITLE, GAME_SUBTITLE, WINDOW_NAME, TEXT, VIDEO_SRC, TITLE_PHOTO, SHOW_EMPTY_PHOTO_FRAMES, GIFTS, MILESTONES, SCENE_LAYERS, MUSIC_SRC };
 })();
 
 const __mod_assets = (() => {
@@ -2850,6 +2852,7 @@ function openVideo(fromEnding) {
 function closeVideo() {
   const video = $("video-player");
   video.pause();
+  duckMusicForVideo(false);
   video.removeAttribute("src");
   video.load();
   hideModal("modal-video");
@@ -2984,6 +2987,10 @@ function wireUI() {
     $("video-player").classList.add("hidden");
     $("video-missing").classList.remove("hidden");
   });
+  // tự tắt nhạc nền lúc video đang chạy, bật lại khi dừng/hết/đóng màn hình video
+  $("video-player").addEventListener("play", () => duckMusicForVideo(true));
+  $("video-player").addEventListener("pause", () => duckMusicForVideo(false));
+  $("video-player").addEventListener("ended", () => duckMusicForVideo(false));
   $("btn-video-done").addEventListener("click", () => {
     const fromEnding = $("btn-video-done").dataset.fromEnding === "1";
     closeVideo();
