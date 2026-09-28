@@ -258,6 +258,8 @@ tui nhớ bạn nhắmm`,
 // Ảnh polaroid: đặt file vào assets/photos/ rồi điền đường dẫn vào từng mốc bên dưới.
 // Video: đặt file .mp4 vào assets/video/ rồi điền tên vào đây (nên dưới 15MB).
 const VIDEO_SRC = "assets/video/video.mp4"; // đã convert từ video.MOV bằng avconvert (macOS) để phát ổn định trên mọi trình duyệt
+// Nhạc nền: giống bản demo — tự tắt khi phát video, tự nhỏ lại một chút mỗi lần nhảy.
+const MUSIC_SRC = "assets/audio/bgm.mp3";
 // Ảnh ở màn hình mở đầu (ảnh dọc kiểu photobooth rất hợp). Để "" thì hiện khung trống.
 const TITLE_PHOTO = "assets/characters/Couple-Pose-Happy-01.png"; // sprite 2 nhân vật ôm nhau, thay cho ảnh chụp
 // true  = luôn vẽ khung ảnh trống kèm chữ hướng dẫn (dùng cho bản demo)
@@ -319,9 +321,7 @@ const SCENE_LAYERS = {
   "ho-tay": { layers: ["L1.png", "L2.png", "L3.png"], speeds: [0.02, 0.3, 0.02] },
 };
 
-const MUSIC_SRC = ""; // de trong = khong co nhac nen (nhu VIDEO_SRC)
-
-return { GAME_TITLE, GAME_SUBTITLE, WINDOW_NAME, TEXT, VIDEO_SRC, TITLE_PHOTO, SHOW_EMPTY_PHOTO_FRAMES, GIFTS, MILESTONES, SCENE_LAYERS, MUSIC_SRC };
+return { GAME_TITLE, GAME_SUBTITLE, WINDOW_NAME, TEXT, VIDEO_SRC, MUSIC_SRC, TITLE_PHOTO, SHOW_EMPTY_PHOTO_FRAMES, GIFTS, MILESTONES, SCENE_LAYERS };
 })();
 
 const __mod_assets = (() => {
