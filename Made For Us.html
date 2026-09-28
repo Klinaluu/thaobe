@@ -266,6 +266,9 @@ const TITLE_PHOTO = "assets/characters/Couple-Pose-Happy-01.png"; // sprite 2 nh
 // false = mốc nào chưa có ảnh thì không treo khung
 const SHOW_EMPTY_PHOTO_FRAMES = false; // bản khách: mốc chưa có ảnh thì không treo khung
 
+// Xe chở đôi chỉ có 1 ảnh (hiệu ứng chạy xe do game tự tạo)
+const COUPLE_FRAMES = ["assets/characters/Couple-Bike-Side-01.png"];
+
 // ---------- 5 món quà của chặng solo ----------
 // icon: để trống ("") thì game tự vẽ hình thay thế.
 // id giữ nguyên (khớp js/levels.js dùng chung) — chỉ đổi label/icon.
@@ -321,7 +324,7 @@ const SCENE_LAYERS = {
   "ho-tay": { layers: ["L1.png", "L2.png", "L3.png"], speeds: [0.02, 0.3, 0.02] },
 };
 
-return { GAME_TITLE, GAME_SUBTITLE, WINDOW_NAME, TEXT, VIDEO_SRC, MUSIC_SRC, TITLE_PHOTO, SHOW_EMPTY_PHOTO_FRAMES, GIFTS, MILESTONES, SCENE_LAYERS };
+return { GAME_TITLE, GAME_SUBTITLE, WINDOW_NAME, TEXT, VIDEO_SRC, MUSIC_SRC, TITLE_PHOTO, SHOW_EMPTY_PHOTO_FRAMES, COUPLE_FRAMES, GIFTS, MILESTONES, SCENE_LAYERS };
 })();
 
 const __mod_assets = (() => {
@@ -1136,6 +1139,7 @@ class JourneyGame {
     scatter(this.arenaStart - 40, this.meetX - this.arenaStart + 300, content.bossTerrain, 31, 4);
     this.milestones.forEach((ms) => scatter(ms.start, SEG_W, ms.terrain, ms.index + 51, 8));
     this.rain = 0; // 0..1 cường độ mưa hiện tại
+    this._rideFx = 0;
 
     // đoạn đi bộ: chìa khoá trên đường, mũ trên 1 viên gạch (tập nhảy), xe trùm bạt ở cuối
     this.gear = [
@@ -1314,6 +1318,10 @@ class JourneyGame {
   }
 
   // ---------- hiệu ứng ----------
+  _riding() {
+    const p = this.player;
+    return this.phase !== "walk" && p.onGround && Math.abs(p.vx) > 1 && !this.paused;
+  }
   _burst(x, y, n, colors) {
     for (let i = 0; i < n; i++) {
       const a = Math.random() * Math.PI * 2;
@@ -1678,6 +1686,20 @@ class JourneyGame {
     p.animT += dt;
     if (this.invuln > 0) this.invuln -= dt;
 
+    // xe đang chạy: khói ống xả + bụi bánh sau — cho xe trông đang chạy kể cả khi chỉ có 1 ảnh
+    if (this._riding()) {
+      this._rideFx -= dt;
+      if (this._rideFx <= 0) {
+        this._rideFx = 0.07;
+        const back = -p.facing;
+        const tail = p.x + p.w / 2 + back * 44;
+        this.particles.push({ x: tail, y: this.groundY - 18 - Math.random() * 4, vx: back * (40 + Math.random() * 40), vy: -18 - Math.random() * 22, life: 0.5, color: "rgba(236,232,242,0.8)", size: 5, gravity: -40 });
+        if (Math.random() < 0.6) {
+          this.particles.push({ x: tail + back * 4, y: this.groundY - 4, vx: back * (70 + Math.random() * 60), vy: -40 - Math.random() * 50, life: 0.3, color: "rgba(206,188,168,0.85)", size: 3, gravity: 320 });
+        }
+      }
+    }
+
     if (this.phase === "couple") {
       const j = this.currentMilestoneIndex();
       if (j !== this._milestoneIndex) {
@@ -1862,7 +1884,11 @@ class JourneyGame {
     }
     // Cảnh có xe máy (một mình hoặc đi đôi) vẽ to hơn nhân vật đi bộ, vẫn neo bánh xe xuống đất
     const bikeScene = this.phase !== "walk";
-    drawPlayer(ctx, this.player, sprite, 0, blink, this.groundY, bikeScene ? 100 : undefined, bikeScene ? 2 : 0);
+    const riding = this._riding();
+    if (riding) drawSpeedLines(ctx, this.player, this.groundY, this.t);
+    // rung máy 1px khi đang chạy
+    const rumble = riding ? Math.floor(this.player.animT * 28) % 2 : 0;
+    drawPlayer(ctx, this.player, sprite, 0, blink, this.groundY, bikeScene ? 100 : undefined, bikeScene ? 2 - rumble : 0);
 
     for (const pt of this.particles) {
       ctx.globalAlpha = Math.max(0, Math.min(1, pt.life / 0.3));
@@ -2543,6 +2569,22 @@ function drawChest(ctx, x, y, opened, t, gift) {
   ctx.restore();
 }
 
+// vệt gió phía sau xe đang chạy
+function drawSpeedLines(ctx, p, groundY, t) {
+  const back = -p.facing;
+  const tail = p.x + p.w / 2 + back * 50;
+  ctx.save();
+  [[26, 0], [52, 0.33], [76, 0.66]].forEach(([h, phase]) => {
+    const k = (t * 3 + phase) % 1; // 0..1: vệt dài ra rồi mờ đi
+    const len = q(10 + k * 26);
+    const gap = q(4 + k * 18);
+    ctx.fillStyle = `rgba(255,255,255,${(0.75 * (1 - k)).toFixed(2)})`;
+    const x0 = back > 0 ? tail + gap : tail - gap - len;
+    ctx.fillRect(q(x0), q(groundY - h), len, 3);
+  });
+  ctx.restore();
+}
+
 function drawPrompt(ctx, x, y, text, t) {
   const bob = q(Math.sin(t * 5) * 3);
   ctx.save();
@@ -2585,7 +2627,7 @@ const __mod_main = (() => {
 // ============================================================
 // Điều phối màn hình, HUD, âm thanh, điều khiển và các đoạn cắt cảnh.
 // ============================================================
-const {GAME_TITLE, GAME_SUBTITLE, WINDOW_NAME, TEXT, GIFTS, MILESTONES, VIDEO_SRC, MUSIC_SRC, TITLE_PHOTO, SHOW_EMPTY_PHOTO_FRAMES, SCENE_LAYERS,} = __mod_config;
+const {GAME_TITLE, GAME_SUBTITLE, WINDOW_NAME, TEXT, GIFTS, MILESTONES, VIDEO_SRC, MUSIC_SRC, TITLE_PHOTO, SHOW_EMPTY_PHOTO_FRAMES, SCENE_LAYERS, COUPLE_FRAMES,} = __mod_config;
 const {IMG, PROPS, PROP_SETS, SCENES, SCENE_SPEEDS, SCENE_SINK, SCENE_TOP, GRASS_SCENES} = __mod_assets;
 const {SOLO_SEGMENTS, SOLO_SEG_W, MAX_HEARTS, WALK_TERRAIN, BOSS_TERRAIN, MEET_TERRAIN, COUPLE_TERRAIN,} = __mod_levels;
 const {initAudio, sfx, setMuted, isMuted, initMusic, playMusic, duckMusicForVideo, setRainIntensity} = __mod_audio;
@@ -2607,6 +2649,9 @@ const SCENE_PATHS = Object.fromEntries(
 const SCENE_SPEEDS_BY_ID = Object.fromEntries(
   Object.keys(SCENES).map((id) => [id, (CUSTOM_SCENES[id] && CUSTOM_SCENES[id].speeds) || SCENE_SPEEDS])
 );
+
+// Khung hình xe chở đôi: khách khai báo riêng (vd chỉ 1 ảnh) hoặc dùng bộ mặc định
+const COUPLE_FRAME_SRCS = COUPLE_FRAMES && COUPLE_FRAMES.length ? COUPLE_FRAMES : IMG.coupleFrames;
 
 let currentGame = null;
 let timeTimer = null;
@@ -2648,7 +2693,7 @@ function normalizeGrain(img, worldHeight) {
   return c;
 }
 async function preloadAll() {
-  const srcs = new Set([...Object.values(IMG).flat(), ...Object.values(SCENE_PATHS).flat(), ...Object.values(PROPS)]);
+  const srcs = new Set([...Object.values({ ...IMG, coupleFrames: COUPLE_FRAME_SRCS }).flat(), ...Object.values(SCENE_PATHS).flat(), ...Object.values(PROPS)]);
   GIFTS.forEach((g) => g.icon && srcs.add(g.icon));
   COUPLE_MILESTONES.forEach((ms) => {
     if (ms.photo) srcs.add(ms.photo);
@@ -2779,7 +2824,7 @@ function startJourney() {
     bikeIdle: getImg(IMG.bikeIdle),
     walkFrames: IMG.walkFrames.map(getImg),
     gear: { key: getImg(IMG.key), helmet: getImg(IMG.helmet) },
-    coupleFrames: IMG.coupleFrames.map(getImg),
+    coupleFrames: COUPLE_FRAME_SRCS.map(getImg),
     woman: getImg(IMG.woman),
     womanCheer: IMG.womanCheer.map(getImg),
     cloud: getImg(IMG.cloud),

@@ -3,7 +3,7 @@
 // ============================================================
 import {
   GAME_TITLE, GAME_SUBTITLE, WINDOW_NAME, TEXT, GIFTS, MILESTONES, VIDEO_SRC, MUSIC_SRC, TITLE_PHOTO, SHOW_EMPTY_PHOTO_FRAMES,
-  SCENE_LAYERS,
+  SCENE_LAYERS, COUPLE_FRAMES,
 } from "./config.js";
 import { IMG, PROPS, PROP_SETS, SCENES, SCENE_SPEEDS, SCENE_SINK, SCENE_TOP, GRASS_SCENES } from "./assets.js";
 import {
@@ -28,6 +28,9 @@ const SCENE_PATHS = Object.fromEntries(
 const SCENE_SPEEDS_BY_ID = Object.fromEntries(
   Object.keys(SCENES).map((id) => [id, (CUSTOM_SCENES[id] && CUSTOM_SCENES[id].speeds) || SCENE_SPEEDS])
 );
+
+// Khung hình xe chở đôi: khách khai báo riêng (vd chỉ 1 ảnh) hoặc dùng bộ mặc định
+const COUPLE_FRAME_SRCS = COUPLE_FRAMES && COUPLE_FRAMES.length ? COUPLE_FRAMES : IMG.coupleFrames;
 
 let currentGame = null;
 let timeTimer = null;
@@ -69,7 +72,7 @@ function normalizeGrain(img, worldHeight) {
   return c;
 }
 async function preloadAll() {
-  const srcs = new Set([...Object.values(IMG).flat(), ...Object.values(SCENE_PATHS).flat(), ...Object.values(PROPS)]);
+  const srcs = new Set([...Object.values({ ...IMG, coupleFrames: COUPLE_FRAME_SRCS }).flat(), ...Object.values(SCENE_PATHS).flat(), ...Object.values(PROPS)]);
   GIFTS.forEach((g) => g.icon && srcs.add(g.icon));
   COUPLE_MILESTONES.forEach((ms) => {
     if (ms.photo) srcs.add(ms.photo);
@@ -200,7 +203,7 @@ function startJourney() {
     bikeIdle: getImg(IMG.bikeIdle),
     walkFrames: IMG.walkFrames.map(getImg),
     gear: { key: getImg(IMG.key), helmet: getImg(IMG.helmet) },
-    coupleFrames: IMG.coupleFrames.map(getImg),
+    coupleFrames: COUPLE_FRAME_SRCS.map(getImg),
     woman: getImg(IMG.woman),
     womanCheer: IMG.womanCheer.map(getImg),
     cloud: getImg(IMG.cloud),

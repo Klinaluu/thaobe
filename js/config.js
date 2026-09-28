@@ -52,6 +52,9 @@ export const TITLE_PHOTO = "assets/characters/Couple-Pose-Happy-01.png"; // spri
 // false = mốc nào chưa có ảnh thì không treo khung
 export const SHOW_EMPTY_PHOTO_FRAMES = false; // bản khách: mốc chưa có ảnh thì không treo khung
 
+// Xe chở đôi chỉ có 1 ảnh (hiệu ứng chạy xe do game tự tạo)
+export const COUPLE_FRAMES = ["assets/characters/Couple-Bike-Side-01.png"];
+
 // ---------- 5 món quà của chặng solo ----------
 // icon: để trống ("") thì game tự vẽ hình thay thế.
 // id giữ nguyên (khớp js/levels.js dùng chung) — chỉ đổi label/icon.

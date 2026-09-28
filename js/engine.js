@@ -202,6 +202,7 @@ export class JourneyGame {
     scatter(this.arenaStart - 40, this.meetX - this.arenaStart + 300, content.bossTerrain, 31, 4);
     this.milestones.forEach((ms) => scatter(ms.start, SEG_W, ms.terrain, ms.index + 51, 8));
     this.rain = 0; // 0..1 cường độ mưa hiện tại
+    this._rideFx = 0;
 
     // đoạn đi bộ: chìa khoá trên đường, mũ trên 1 viên gạch (tập nhảy), xe trùm bạt ở cuối
     this.gear = [
@@ -380,6 +381,10 @@ export class JourneyGame {
   }
 
   // ---------- hiệu ứng ----------
+  _riding() {
+    const p = this.player;
+    return this.phase !== "walk" && p.onGround && Math.abs(p.vx) > 1 && !this.paused;
+  }
   _burst(x, y, n, colors) {
     for (let i = 0; i < n; i++) {
       const a = Math.random() * Math.PI * 2;
@@ -744,6 +749,20 @@ export class JourneyGame {
     p.animT += dt;
     if (this.invuln > 0) this.invuln -= dt;
 
+    // xe đang chạy: khói ống xả + bụi bánh sau — cho xe trông đang chạy kể cả khi chỉ có 1 ảnh
+    if (this._riding()) {
+      this._rideFx -= dt;
+      if (this._rideFx <= 0) {
+        this._rideFx = 0.07;
+        const back = -p.facing;
+        const tail = p.x + p.w / 2 + back * 44;
+        this.particles.push({ x: tail, y: this.groundY - 18 - Math.random() * 4, vx: back * (40 + Math.random() * 40), vy: -18 - Math.random() * 22, life: 0.5, color: "rgba(236,232,242,0.8)", size: 5, gravity: -40 });
+        if (Math.random() < 0.6) {
+          this.particles.push({ x: tail + back * 4, y: this.groundY - 4, vx: back * (70 + Math.random() * 60), vy: -40 - Math.random() * 50, life: 0.3, color: "rgba(206,188,168,0.85)", size: 3, gravity: 320 });
+        }
+      }
+    }
+
     if (this.phase === "couple") {
       const j = this.currentMilestoneIndex();
       if (j !== this._milestoneIndex) {
@@ -928,7 +947,11 @@ export class JourneyGame {
     }
     // Cảnh có xe máy (một mình hoặc đi đôi) vẽ to hơn nhân vật đi bộ, vẫn neo bánh xe xuống đất
     const bikeScene = this.phase !== "walk";
-    drawPlayer(ctx, this.player, sprite, 0, blink, this.groundY, bikeScene ? 100 : undefined, bikeScene ? 2 : 0);
+    const riding = this._riding();
+    if (riding) drawSpeedLines(ctx, this.player, this.groundY, this.t);
+    // rung máy 1px khi đang chạy
+    const rumble = riding ? Math.floor(this.player.animT * 28) % 2 : 0;
+    drawPlayer(ctx, this.player, sprite, 0, blink, this.groundY, bikeScene ? 100 : undefined, bikeScene ? 2 - rumble : 0);
 
     for (const pt of this.particles) {
       ctx.globalAlpha = Math.max(0, Math.min(1, pt.life / 0.3));
@@ -1606,6 +1629,22 @@ function drawChest(ctx, x, y, opened, t, gift) {
     ctx.fillStyle = OUTLINE;
     ctx.fillRect(x + w / 2 - 2, y + lidH, 4, 6);
   }
+  ctx.restore();
+}
+
+// vệt gió phía sau xe đang chạy
+function drawSpeedLines(ctx, p, groundY, t) {
+  const back = -p.facing;
+  const tail = p.x + p.w / 2 + back * 50;
+  ctx.save();
+  [[26, 0], [52, 0.33], [76, 0.66]].forEach(([h, phase]) => {
+    const k = (t * 3 + phase) % 1; // 0..1: vệt dài ra rồi mờ đi
+    const len = q(10 + k * 26);
+    const gap = q(4 + k * 18);
+    ctx.fillStyle = `rgba(255,255,255,${(0.75 * (1 - k)).toFixed(2)})`;
+    const x0 = back > 0 ? tail + gap : tail - gap - len;
+    ctx.fillRect(q(x0), q(groundY - h), len, 3);
+  });
   ctx.restore();
 }
 
