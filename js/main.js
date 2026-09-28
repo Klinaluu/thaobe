@@ -104,6 +104,8 @@ const $ = (id) => document.getElementById(id);
 function showScreen(id) {
   document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
   $(id).classList.add("active");
+  // màn hình mở đầu không bắt xoay ngang, để nút "Add to Home Screen" luôn bấm được
+  document.body.classList.toggle("on-title-screen", id === "screen-title");
 }
 const showModal = (id) => $(id).classList.remove("hidden");
 const hideModal = (id) => $(id).classList.add("hidden");
@@ -593,6 +595,7 @@ function applyBranding() {
 }
 
 async function init() {
+  document.body.classList.add("on-title-screen"); // màn hình mặc định khi tải trang là title
   applyBranding();
   wireUI();
   initInstallHint({ text: TEXT.install });

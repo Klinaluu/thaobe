@@ -570,9 +570,10 @@ button { font-family: var(--font-body); cursor: pointer; }
 }
 .rotate-icon { font-size: 56px; color: var(--accent); margin-bottom: 10px; animation: spin-hint 2.4s ease-in-out infinite; display: inline-block; }
 @keyframes spin-hint { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(90deg); } }
-/* điện thoại lẫn máy tính bảng: cầm dọc thì nhắc xoay ngang */
+/* điện thoại lẫn máy tính bảng: cầm dọc thì nhắc xoay ngang —
+   trừ màn hình mở đầu, để nút "Add to Home Screen" luôn bấm được dù đang cầm dọc */
 @media (orientation: portrait) and (hover: none) {
-  #rotate-overlay { display: flex; }
+  body:not(.on-title-screen) #rotate-overlay { display: flex; }
 }
 
 /* nút bật/tắt âm thanh — góc trên phải, nổi trên mọi màn hình */
