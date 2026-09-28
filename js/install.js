@@ -179,5 +179,5 @@ export function initInstallHint(opts = {}) {
     e.preventDefault(); // tự hiện hộp thoại của mình thay vì thanh mặc định
     deferredPrompt = e;
   });
-  setTimeout(() => maybeShowInstallHint(opts), opts.delay ?? 1400);
+  setTimeout(() => maybeShowInstallHint(opts), opts.delay ?? 0);
 }
