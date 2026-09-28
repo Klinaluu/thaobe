@@ -39,6 +39,8 @@ const INVULN_TIME = 1.3;
 // logic một đoạn, khiến nhân vật/cây/gai trông như lơ lửng phía trên vạch kẻ. Nâng cả dải
 // đường lên để vạch kẻ mới là nơi thật sự trùng với groundY (nơi mọi thứ đang neo chân).
 const LANE_LIFT = 29;
+// Cây/hoa ven đường đứng trên dải lề phía trên của ảnh đường (cao hơn vạch kẻ bấy nhiêu px)
+const PROP_KERB = 20;
 
 const LEFT_KEYS = ["ArrowLeft", "a", "A"];
 const RIGHT_KEYS = ["ArrowRight", "d", "D"];
@@ -1343,7 +1345,8 @@ function drawProp(ctx, im, pr, groundY) {
   const h = pr.h;
   const w = h * (im.width / im.height);
   ctx.save();
-  ctx.translate(pr.x, groundY + 2);
+  // cây cỏ mọc ở mép trên con đường (lề), lùi sau làn xe — nhân vật/xe/chướng ngại mới chạy trên vạch kẻ
+  ctx.translate(pr.x, groundY - PROP_KERB);
   if (pr.flip) ctx.scale(-1, 1);
   ctx.drawImage(im, -w / 2, -h, w, h);
   ctx.restore();

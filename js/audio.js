@@ -19,6 +19,13 @@ export function initAudio() {
   }
   const AC = window.AudioContext || window.webkitAudioContext;
   if (!AC) return;
+  // iPhone: gạt im lặng tắt tiếng WebAudio (tiếng nhảy) nhưng không tắt nhạc nền mp3 → lệch nhau.
+  // "playback" cho cả hai cùng kêu; muốn tắt thì dùng nút 🔊 trong game.
+  try {
+    if (navigator.audioSession) navigator.audioSession.type = "playback";
+  } catch (e) {
+    /* Safari cũ */
+  }
   ctx = new AC();
   master = ctx.createGain();
   master.gain.value = muted ? 0 : 1;
@@ -69,10 +76,27 @@ export function initMusic(src) {
   musicEl.volume = 0;
 }
 
+let musicWanted = false; // đã bấm Start → nhạc nên đang phát (trừ lúc trang bị ẩn)
+
 export function playMusic() {
   if (!musicEl) return;
+  musicWanted = true;
   musicEl.play().then(() => fadeMusicTo(targetMusicVolume(), 1500)).catch(() => {});
 }
+
+// Chuyển sang app khác / khoá màn hình: Android vẫn phát nhạc tab nền → tạm dừng, quay lại thì phát tiếp
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    if (musicEl) musicEl.pause();
+    if (ctx && ctx.state === "running") ctx.suspend();
+    return;
+  }
+  if (ctx && ctx.state === "suspended") ctx.resume();
+  if (musicEl && musicWanted) {
+    musicEl.volume = 0;
+    musicEl.play().then(() => fadeMusicTo(targetMusicVolume(), 800)).catch(() => {});
+  }
+});
 
 // gọi khi màn hình video mở (on = true) / đóng hoặc dừng phát (on = false)
 export function duckMusicForVideo(on) {

@@ -52,13 +52,19 @@ function remember() {
   }
 }
 
+// Tên nút ghi kèm tiếng Việt trong ngoặc: điện thoại để tiếng Việt thì menu hiện chữ Việt.
+// Safari trên iPhone đời mới để nút Chia sẻ trong menu ≡ / ••• cạnh thanh địa chỉ.
+const IOS_SHARE = "Tap Share □↑ (Chia sẻ) — on newer iPhones it's inside the ≡ or ••• menu next to the address bar";
+const IOS_ADD = "Choose “Add to Home Screen” (Thêm vào MH chính) — scroll down if you don't see it";
+const OPEN_ICON = "Open it from the new icon — full screen, no address bar";
+
 const COPY = {
   "in-app": {
     title: "OPEN_IN_BROWSER",
     heading: "Open in your browser",
     steps: [
-      "Tap the ••• menu in the top corner",
-      "Choose “Open in browser” (Chrome)",
+      "Tap the ⋮ or ••• menu in the top corner",
+      "Choose “Open in browser” (Mở bằng trình duyệt)",
       "Then add it to your Home Screen to play full screen",
     ],
     action: "Copy link",
@@ -67,9 +73,9 @@ const COPY = {
     title: "OPEN_IN_SAFARI",
     heading: "Open it in Safari",
     steps: [
-      "Tap the ••• menu in the corner and choose “Open in Safari”",
+      "Tap the ••• menu in the corner and choose “Open in Safari” (Mở bằng Safari)",
       "No such option? Tap “Copy link” below, open the Safari app and paste it",
-      "In Safari: tap Share, then “Add to Home Screen”",
+      "In Safari: tap Share (Chia sẻ), then “Add to Home Screen” (Thêm vào MH chính)",
     ],
     note: "On iPhone only Safari can add a site to the Home Screen.",
     action: "Copy link",
@@ -77,11 +83,7 @@ const COPY = {
   ios: {
     title: "ADD_TO_HOME",
     heading: "Play it like an app",
-    steps: [
-      "Tap the Share button at the bottom of Safari",
-      "Scroll down and choose “Add to Home Screen”",
-      "Open it from the new icon — full screen, no address bar",
-    ],
+    steps: [IOS_SHARE, IOS_ADD, OPEN_ICON],
     action: "Got it",
   },
   "ios-other": {
@@ -89,8 +91,8 @@ const COPY = {
     heading: "Open it in Safari",
     steps: [
       "Reopen this link in the Safari app — or tap “Copy link” below and paste it into Safari",
-      "In Safari: tap the Share button (square with an arrow)",
-      "Scroll down and choose “Add to Home Screen”",
+      "In Safari: " + IOS_SHARE.charAt(0).toLowerCase() + IOS_SHARE.slice(1),
+      IOS_ADD,
     ],
     note: "On iPhone only Safari can add a site to the Home Screen.",
     action: "Copy link",
@@ -99,11 +101,13 @@ const COPY = {
     title: "ADD_TO_HOME",
     heading: "Play it like an app",
     steps: [
-      "Tap “Install app” below",
-      "Or open the ⋮ menu and choose “Install app”",
-      "Open it from the new icon — full screen, no address bar",
+      "Open the browser menu — ⋮ at the top (Chrome) or ≡ at the bottom (Samsung Internet)",
+      "Choose “Install app” or “Add to Home screen” (Thêm vào màn hình chính)",
+      OPEN_ICON,
     ],
-    action: "Install app",
+    // chỉ hiện "Install app" khi trình duyệt đã cho phép cài trực tiếp (beforeinstallprompt)
+    action: "Got it",
+    installAction: "Install app",
   },
 };
 
@@ -121,7 +125,7 @@ function buildModal(platform, text) {
         <div class="install-heading">${copy.heading}</div>
         <ol class="install-steps">${copy.steps.map((s) => `<li>${s}</li>`).join("")}</ol>
         ${copy.note ? `<p class="install-note">${copy.note}</p>` : ""}
-        <button class="pixel-btn primary" data-action>${copy.action}</button>
+        <button class="pixel-btn primary" data-action data-install-label="${copy.installAction || ""}">${platform === "android" && deferredPrompt && copy.installAction ? copy.installAction : copy.action}</button>
         <input class="install-link hidden" data-link readonly value="${location.href}">
       </div>
     </div>`;
@@ -181,6 +185,9 @@ export function initInstallHint(opts = {}) {
   window.addEventListener("beforeinstallprompt", (e) => {
     e.preventDefault(); // tự hiện hộp thoại của mình thay vì thanh mặc định
     deferredPrompt = e;
+    // gợi ý đã mở trước khi trình duyệt cho phép cài → đổi nút thành "Install app"
+    const btn = document.querySelector("#modal-install [data-action]");
+    if (btn && btn.dataset.installLabel) btn.textContent = btn.dataset.installLabel;
   });
   setTimeout(() => maybeShowInstallHint(opts), opts.delay ?? 0);
 }

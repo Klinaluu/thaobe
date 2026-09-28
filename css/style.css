@@ -265,10 +265,10 @@ button { font-family: var(--font-body); cursor: pointer; }
   border: 2px solid rgba(255,255,255,0.35);
   margin-bottom: 8px;
 }
-/* bố cục tay cầm cho mọi thiết bị: ▲ nhảy bên TRÁI, ◀ ▶ bên PHẢI */
+/* bố cục tay cầm quen thuộc của game điện thoại: ◀ ▶ bên TRÁI (ngón cái trái), ▲ nhảy bên PHẢI */
 .touch-controls {
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: row;
   justify-content: space-between;
   align-items: flex-end;
   width: 100%;
