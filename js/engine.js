@@ -63,6 +63,17 @@ function ready(img) {
 const PX = 2;
 const q = (v) => Math.round(v / PX) * PX;
 
+// Chữ vẽ trên canvas + font pixel cho chữ đó — main.js truyền vào theo ngôn ngữ máy
+// (content.strings / content.titleFont), không truyền thì dùng tiếng Anh.
+const STR_EN = {
+  popCollectFirst: "Collect all 5 gifts first!", popForgot: "Forgot your {x}!", popRide: "Let's ride!",
+  popDoubtCleared: "Doubt cleared ✦", popRainOver: "☂ Rain's over", gearKey: "Key", gearHelmet: "Helmet",
+  itemUmbrella: "Umbrella", itemEgg: "Golden egg", promptOpen: "Open", bikeMine: "MY BIKE", bikeGo: "LET'S GO",
+  bossDoubt: "DOUBT",
+};
+let STR = STR_EN;
+let TITLE_FONT = "'Press Start 2P', monospace";
+
 export class JourneyGame {
   constructor(canvas, content, images, callbacks) {
     this.canvas = canvas;
@@ -70,10 +81,13 @@ export class JourneyGame {
     this.CW = canvas.width || CW;
     this.CH = canvas.height || CH;
     this.bottomInset = content.bottomInset || 0;
+    this.topInset = content.topInset || 0;
     this.groundY = this.CH - groundMarginFor(this.CH, this.bottomInset);
     this.images = images;
     this.cb = callbacks;
     this.content = content;
+    STR = { ...STR_EN, ...(content.strings || {}) };
+    if (content.titleFont) TITLE_FONT = content.titleFont;
     this._raf = null;
     this._destroyed = false;
 
@@ -154,7 +168,7 @@ export class JourneyGame {
       });
       if (ms.event === "rain") {
         this.rainMs = ms;
-        this.extras.push({ id: "umbrella", label: "Umbrella", x: ms.start + ms.itemAt.x, gap: ms.itemAt.y, collected: false, ms });
+        this.extras.push({ id: "umbrella", label: STR.itemUmbrella, x: ms.start + ms.itemAt.x, gap: ms.itemAt.y, collected: false, ms });
       }
       // điểm thưởng (id "egg", vẽ bằng assets/props/Egg-Gold.png = hình trái tim) rải dọc
       // đường, vài cái phải nhảy mới tới
@@ -162,7 +176,7 @@ export class JourneyGame {
         [[250, 40], [520, 130], [790, 60]].forEach(([dx, gap]) => {
           const x = ms.start + dx;
           const blocked = (ms.blocks || []).some((b) => Math.abs(ms.start + b.x - x) < 90) || (ms.platforms || []).some((pf) => Math.abs(ms.start + pf.x - x) < 120);
-          if (!blocked) this.extras.push({ id: "egg", label: "Golden egg", x, gap, collected: false, ms });
+          if (!blocked) this.extras.push({ id: "egg", label: STR.itemEgg, x, gap, collected: false, ms });
         });
       }
     });
@@ -208,8 +222,8 @@ export class JourneyGame {
 
     // đoạn đi bộ: chìa khoá trên đường, mũ trên 1 viên gạch (tập nhảy), xe trùm bạt ở cuối
     this.gear = [
-      { id: "key", label: "Key", x: 230, gap: 28, collected: false },
-      { id: "helmet", label: "Helmet", x: 404, gap: 62, collected: false },
+      { id: "key", label: STR.gearKey, x: 230, gap: 28, collected: false },
+      { id: "helmet", label: STR.gearHelmet, x: 404, gap: 62, collected: false },
     ];
     this.solids.push({ x: 400, top: BLOCK, w: BLOCK, h: BLOCK, kind: "brick" });
     this.bikeX = 560;
@@ -259,10 +273,11 @@ export class JourneyGame {
     this.keys[name] = false;
   }
 
-  resize(newWidth, newHeight, bottomInset) {
+  resize(newWidth, newHeight, bottomInset, topInset) {
     if (!newWidth || !newHeight) return;
     if (bottomInset != null) this.bottomInset = bottomInset;
-    if (newWidth === this.CW && newHeight === this.CH && bottomInset == null) return;
+    if (topInset != null) this.topInset = topInset;
+    if (newWidth === this.CW && newHeight === this.CH && bottomInset == null && topInset == null) return;
     this.canvas.width = newWidth;
     this.canvas.height = newHeight;
     this.CW = newWidth;
@@ -535,13 +550,13 @@ export class JourneyGame {
     if (p.x > maxX) {
       if (this.phase === "solo" && !this.allCollected() && !this._hintShown) {
         this._hintShown = true;
-        this.popups.push({ x: p.x + p.w / 2, y: p.y - 10, vy: -30, life: 2.2, text: "Collect all 5 gifts first!", color: "#e0538a" });
+        this.popups.push({ x: p.x + p.w / 2, y: p.y - 10, vy: -30, life: 2.2, text: STR.popCollectFirst, color: "#e0538a" });
         setTimeout(() => (this._hintShown = false), 2500);
       }
       if (this.phase === "walk" && !this._hintShown) {
         this._hintShown = true;
         const missing = this.gear.filter((g) => !g.collected).map((g) => g.label.toLowerCase()).join(" & ");
-        this.popups.push({ x: p.x + p.w / 2, y: p.y - 10, vy: -30, life: 2.2, text: "Forgot your " + missing + "!", color: "#e0538a" });
+        this.popups.push({ x: p.x + p.w / 2, y: p.y - 10, vy: -30, life: 2.2, text: STR.popForgot.replace("{x}", missing), color: "#e0538a" });
         setTimeout(() => (this._hintShown = false), 2500);
       }
       p.x = maxX;
@@ -639,7 +654,7 @@ export class JourneyGame {
           }
           this._dust(p.x + p.w / 2, this.groundY);
           this.shake = 0.15;
-          this.popups.push({ x: p.x + p.w / 2, y: p.y - 16, vy: -35, life: 1.6, text: "Let's ride!", color: "#e0538a" });
+          this.popups.push({ x: p.x + p.w / 2, y: p.y - 16, vy: -35, life: 1.6, text: STR.popRide, color: "#e0538a" });
           this.cb.onMount && this.cb.onMount();
         }
       }
@@ -714,7 +729,7 @@ export class JourneyGame {
             b.defeated = true;
             b.active = false;
             this._burst(b.x + BOSS_W / 2, top + BOSS_H / 2, 30, ["#fff", "#cfc4e6", "#ffb6cf", "#f2c94c"]);
-            this.popups.push({ x: b.x + BOSS_W / 2, y: top - 10, vy: -30, life: 2, text: "Doubt cleared ✦", color: "#fff" });
+            this.popups.push({ x: b.x + BOSS_W / 2, y: top - 10, vy: -30, life: 2, text: STR.popDoubtCleared, color: "#fff" });
             this._addScore(300);
             this.shake = 0.3;
             this.cb.onBoss && this.cb.onBoss("defeated", b);
@@ -781,7 +796,7 @@ export class JourneyGame {
             this._addScore(50, ex.x + ITEM_SIZE / 2, bottom - ITEM_SIZE);
           } else {
             this._burst(ex.x + ITEM_SIZE / 2, bottom - ITEM_SIZE / 2, 16, ["#fff", "#ffd6e4", "#ff6fa0"]);
-            this.popups.push({ x: ex.x + ITEM_SIZE / 2, y: bottom - ITEM_SIZE, vy: -45, life: 1.4, text: "☂ Rain's over", color: "#e0538a" });
+            this.popups.push({ x: ex.x + ITEM_SIZE / 2, y: bottom - ITEM_SIZE, vy: -45, life: 1.4, text: STR.popRainOver, color: "#e0538a" });
             this._addScore(150);
           }
           this.cb.onExtra && this.cb.onExtra(ex);
@@ -807,7 +822,7 @@ export class JourneyGame {
 
     this.prompt = null;
     if (this.phase === "chest" && !this.chest.opened) {
-      if (Math.abs(p.x + p.w - this.chestX) < 60) this.prompt = { x: this.chestX + 32, y: this.groundY - 80, text: "Open" };
+      if (Math.abs(p.x + p.w - this.chestX) < 60) this.prompt = { x: this.chestX + 32, y: this.groundY - 80, text: STR.promptOpen };
     }
     if (this.phase === "gift" && this.gift.active) {
       const g = this.gift;
@@ -823,7 +838,7 @@ export class JourneyGame {
           this._burst(this.giftX + 32, this.groundY - 30, 12, ["#fff", "#ffb6cf"]);
         }
       } else if (!g.opened && Math.abs(p.x + p.w - this.giftX) < 60) {
-        this.prompt = { x: this.giftX + 32, y: this.groundY - 80, text: "Open" };
+        this.prompt = { x: this.giftX + 32, y: this.groundY - 80, text: STR.promptOpen };
       }
     }
 
@@ -917,11 +932,17 @@ export class JourneyGame {
     if (this.phase === "solo") drawWoman(ctx, img.woman, this.meetX, this.groundY, this.t, false);
     if (this.phase === "meeting") drawWoman(ctx, img.womanCheer[Math.floor(this.t * 4) % 2], this.meetX, this.groundY, this.t, true);
 
+    // Khung polaroid treo ngay dưới thanh HUD (dây đủ dài để không bị thanh đè lên, xem
+    // topInset) và to hết mức chiều cao còn trống phía trên mặt đường cho phép — màn hình
+    // càng cao (laptop) khung càng to, màn thấp (điện thoại nằm ngang) thì tự nhỏ lại,
+    // không bao giờ đè lên xe/HUD dưới đường.
+    const polaroidTop = Math.max(30, this.topInset);
+    const polaroidMax = Math.max(150, Math.min(280, this.groundY - polaroidTop - 70));
     for (const ms of this.milestones) {
       const photo = img.polaroids[ms.index];
       if (!photo && !this.content.emptyPolaroids) continue; // mốc không có ảnh thì không treo khung
       if (ms.polaroidX < this.camX - 300 || ms.polaroidX > this.camX + this.CW + 300) continue;
-      drawPolaroid(ctx, photo, ms.date, ms.polaroidX, Math.max(60, this.groundY - 360), this.t, ms.index, ms.name, this.content.photoPlaceholder);
+      drawPolaroid(ctx, photo, ms.date, ms.polaroidX, polaroidTop, this.t, ms.index, ms.name, this.content.photoPlaceholder, polaroidMax);
     }
 
     for (const ex of this.extras) {
@@ -1287,10 +1308,10 @@ function drawBoss(ctx, cloudImg, b, groundY, t) {
     ctx.fillRect(lx, y + h + 16, 6, 10);
   }
   // nhãn + số lần né
-  ctx.font = "9px 'Press Start 2P', monospace";
+  ctx.font = `9px ${TITLE_FONT}`;
   ctx.textAlign = "center";
   ctx.fillStyle = "#fff";
-  ctx.fillText("DOUBT", x + w / 2, y - 14);
+  ctx.fillText(STR.bossDoubt, x + w / 2, y - 14);
   for (let i = 0; i < BOSS_DODGES; i++) {
     ctx.fillStyle = i < b.dodges ? "#f2c94c" : "rgba(255,255,255,0.35)";
     ctx.fillRect(q(x + w / 2 - 18 + i * 14), y - 10, 8, 4);
@@ -1302,7 +1323,7 @@ function drawBoss(ctx, cloudImg, b, groundY, t) {
 function drawCoveredBike(ctx, image, x, groundY, t, ready_) {
   ctx.save();
   const label = () => {
-    ctx.font = "8px 'Press Start 2P', monospace";
+    ctx.font = `8px ${TITLE_FONT}`;
     ctx.textAlign = "center";
     ctx.fillStyle = ready_ && Math.floor(t * 3) % 2 === 0 ? "#f2c94c" : "#fff";
   };
@@ -1312,7 +1333,7 @@ function drawCoveredBike(ctx, image, x, groundY, t, ready_) {
     drawShadow(ctx, x + w / 2, groundY, w * 0.85, 0.22);
     ctx.drawImage(image, x, groundY - h, w, h);
     label();
-    ctx.fillText(ready_ ? "LET'S GO" : "MY BIKE", x + w / 2, groundY - h - 8);
+    ctx.fillText(ready_ ? STR.bikeGo : STR.bikeMine, x + w / 2, groundY - h - 8);
   } else {
     // bạt phủ vẽ tay: dùng khi chưa có ảnh xe riêng của khách
     const w = 120;
@@ -1334,7 +1355,7 @@ function drawCoveredBike(ctx, image, x, groundY, t, ready_) {
     ctx.fillStyle = "#fff";
     ctx.fillRect(x + 44, y + 22, 24, 4);
     label();
-    ctx.fillText(ready_ ? "LET'S GO" : "MY BIKE", x + w / 2, y - 8);
+    ctx.fillText(ready_ ? STR.bikeGo : STR.bikeMine, x + w / 2, y - 8);
   }
   ctx.restore();
 }
@@ -1494,12 +1515,29 @@ function drawWoman(ctx, image, x, groundY, t, cheer) {
 }
 
 
-// Khung polaroid: viền pixel, bóng cứng lệch, dây treo
-function drawPolaroid(ctx, photo, date, x, y, t, i, name, placeholder) {
-  // Khung ôm theo tỉ lệ ảnh thật (không crop): ảnh vừa trong hộp MAX×MAX, viền 8, đáy 44 cho chữ
-  const MAX = 190;
+// Ngắt chữ theo từ, không vượt quá maxWidth (dùng ctx.font đã set sẵn trước khi gọi)
+function wrapText(ctx, text, maxWidth) {
+  const words = text.split(" ");
+  const lines = [];
+  let line = "";
+  for (const word of words) {
+    const next = line ? line + " " + word : word;
+    if (ctx.measureText(next).width > maxWidth && line) {
+      lines.push(line);
+      line = word;
+    } else line = next;
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+// Khung polaroid: viền pixel, bóng cứng lệch, dây treo.
+// maxSize: cạnh dài nhất của ảnh (đơn vị thế giới) — render() tính theo chiều cao màn hình
+// còn trống phía trên mặt đường, nên laptop có khung to hơn điện thoại nằm ngang hẳn.
+function drawPolaroid(ctx, photo, date, x, y, t, i, name, placeholder, maxSize) {
+  // Khung ôm theo tỉ lệ ảnh thật (không crop): ảnh vừa trong hộp MAX×MAX, viền 8
+  const MAX = maxSize || 190;
   const PAD = 8;
-  const FOOT = 44;
   let iw = 130;
   let ih = 130;
   if (ready(photo)) {
@@ -1508,18 +1546,50 @@ function drawPolaroid(ctx, photo, date, x, y, t, i, name, placeholder) {
     ih = Math.round(photo.height * s);
   }
   const w = iw + PAD * 2;
+
+  // ---------- chú thích: ngày + tên mốc, đủ dấu tiếng Việt (Be Vietnam Pro như dòng điểm
+  // rơi ở trên). Mốc nào date và name đều trống thì không vẽ gì — giữ nguyên khung trắng
+  // như trước, không đổi giao diện các bản khách chủ động để trống (vd bản thaobe). ----------
+  ctx.textAlign = "center";
+  const maxTextW = w - 16;
+  const fitSize = (text, base, min, bold) => {
+    let px = base;
+    ctx.font = `${bold ? 700 : 600} ${px}px 'Be Vietnam Pro', sans-serif`;
+    while (px > min && ctx.measureText(text).width > maxTextW) {
+      px -= 1;
+      ctx.font = `${bold ? 700 : 600} ${px}px 'Be Vietnam Pro', sans-serif`;
+    }
+    return px;
+  };
+  const rows = [];
+  if (date) rows.push({ text: date, px: fitSize(date, 14, 10, true), bold: true, color: "#6b3f52" });
+  if (name) {
+    const namePx = fitSize(name, date ? 12 : 14, 9, false);
+    ctx.font = `600 ${namePx}px 'Be Vietnam Pro', sans-serif`;
+    const nameColor = date ? "#a97a92" : "#6b3f52";
+    if (ctx.measureText(name).width > maxTextW) {
+      // vẫn dài quá dù đã thu nhỏ tối đa: xuống 2 dòng thay vì tràn khỏi khung
+      for (const line of wrapText(ctx, name, maxTextW)) rows.push({ text: line, px: namePx, bold: false, color: nameColor });
+    } else {
+      rows.push({ text: name, px: namePx, bold: false, color: nameColor });
+    }
+  }
+  // FOOT=44 (như cũ) đủ chỗ cho tối đa 2 dòng; tên phải xuống dòng thứ 3 mới cần đáy cao hơn.
+  const FOOT = 44 + Math.max(0, rows.length - 2) * 14;
+
   const h = ih + PAD + FOOT;
   const bob = q(Math.sin(t * 1.4 + i) * 4);
   const rot = ((i % 2 === 0 ? -1 : 1) * 3 * Math.PI) / 180;
   ctx.save();
   ctx.translate(x + w / 2, y + h / 2 + bob);
   ctx.rotate(rot);
-  // dây treo lên trời
+  // dây treo — chỉ đủ dài chạm mép trên màn hình (y = khoảng cách từ đỉnh khung tới đó),
+  // không kéo cố định 400px như trước (thừa trên màn to, có khi hụt trên màn cao)
   ctx.strokeStyle = "rgba(43,32,48,0.5)";
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(0, -h / 2);
-  ctx.lineTo(0, -h / 2 - 400);
+  ctx.lineTo(0, -h / 2 - (y + 40));
   ctx.stroke();
   // bóng cứng
   ctx.fillStyle = "rgba(43,32,48,0.28)";
@@ -1550,17 +1620,8 @@ function drawPolaroid(ctx, photo, date, x, y, t, i, name, placeholder) {
       ctx.strokeRect(px + 5, py + 5, iw - 10, ih - 10);
       ctx.setLineDash([]);
       ctx.fillStyle = "rgba(224,83,138,0.8)";
-      ctx.font = "8px 'Press Start 2P', monospace";
-      const lines = [];
-      let line = "";
-      for (const word of placeholder.split(" ")) {
-        const next = line ? line + " " + word : word;
-        if (ctx.measureText(next).width > iw - 22 && line) {
-          lines.push(line);
-          line = word;
-        } else line = next;
-      }
-      if (line) lines.push(line);
+      ctx.font = `8px ${TITLE_FONT}`;
+      const lines = wrapText(ctx, placeholder, iw - 22);
       let ty = py + ih / 2 - (lines.length - 1) * 7;
       for (const l of lines) {
         ctx.fillText(l, 0, ty);
@@ -1570,6 +1631,18 @@ function drawPolaroid(ctx, photo, date, x, y, t, i, name, placeholder) {
       ctx.fillStyle = "rgba(224,83,138,0.35)";
       ctx.font = "26px sans-serif";
       ctx.fillText("♡", 0, py + ih / 2 + 9);
+    }
+  }
+
+  if (rows.length) {
+    ctx.textAlign = "center";
+    const lineH = 14;
+    let ly = h / 2 - 10 - (rows.length - 1) * lineH;
+    for (const row of rows) {
+      ctx.font = `${row.bold ? 700 : 600} ${row.px}px 'Be Vietnam Pro', sans-serif`;
+      ctx.fillStyle = row.color;
+      ctx.fillText(row.text, 0, ly);
+      ly += lineH;
     }
   }
   ctx.restore();
@@ -1641,7 +1714,7 @@ function drawSpeedLines(ctx, p, groundY, t) {
 function drawPrompt(ctx, x, y, text, t) {
   const bob = q(Math.sin(t * 5) * 3);
   ctx.save();
-  ctx.font = "10px 'Press Start 2P', monospace";
+  ctx.font = `10px ${TITLE_FONT}`;
   ctx.textAlign = "center";
   const w = q(ctx.measureText(text).width + 44);
   ctx.fillStyle = OUTLINE;

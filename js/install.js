@@ -8,6 +8,7 @@
 //   3. Android + Chrome → dùng sự kiện beforeinstallprompt để bật hộp thoại cài thật.
 // Máy tính không hiện gì (đã có nút toàn màn hình).
 // ============================================================
+import { getLang } from "./i18n.js";
 
 // path riêng cho từng site: GitHub Pages phục vụ mọi bản (demo lẫn từng khách)
 // dưới cùng một origin "klinaluu.github.io", nên nếu chỉ khoá theo tên biến thì
@@ -52,7 +53,8 @@ function remember() {
   }
 }
 
-// Tên nút ghi kèm tiếng Việt trong ngoặc: điện thoại để tiếng Việt thì menu hiện chữ Việt.
+// Bản tiếng Anh ghi kèm tên nút tiếng Việt trong ngoặc: người dùng máy tiếng Anh nhưng
+// menu hệ thống có thể vẫn là tiếng Việt. Bản tiếng Việt thì ghi thẳng tên nút tiếng Việt.
 // Safari trên iPhone đời mới để nút Chia sẻ trong menu ≡ / ••• cạnh thanh địa chỉ.
 const IOS_SHARE = "Tap Share □↑ (Chia sẻ) — on newer iPhones it's inside the ≡ or ••• menu next to the address bar";
 const IOS_ADD = "Choose “Add to Home Screen” (Thêm vào MH chính) — scroll down if you don't see it";
@@ -111,10 +113,67 @@ const COPY = {
   },
 };
 
+const VI_SHARE = "Bấm nút Chia sẻ □↑ — iPhone đời mới để nút này trong menu ≡ hoặc ••• cạnh thanh địa chỉ";
+const VI_ADD = "Chọn “Thêm vào MH chính” — không thấy thì kéo xuống dưới";
+const VI_OPEN = "Mở game từ biểu tượng mới — toàn màn hình, không còn thanh địa chỉ";
+const VI_SAFARI_ONLY = "Trên iPhone chỉ Safari mới thêm được trang web vào màn hình chính.";
+
+const COPY_VI = {
+  "in-app": {
+    title: "OPEN_IN_BROWSER",
+    heading: "Mở bằng trình duyệt",
+    steps: [
+      "Bấm menu ⋮ hoặc ••• ở góc trên",
+      "Chọn “Mở bằng trình duyệt”",
+      "Sau đó thêm vào màn hình chính để chơi toàn màn hình",
+    ],
+    action: "Sao chép link",
+  },
+  "in-app-ios": {
+    title: "OPEN_IN_SAFARI",
+    heading: "Mở bằng Safari",
+    steps: [
+      "Bấm menu ••• ở góc và chọn “Mở bằng Safari”",
+      "Không có mục đó? Bấm “Sao chép link” bên dưới, mở app Safari rồi dán vào",
+      "Trong Safari: bấm Chia sẻ, rồi chọn “Thêm vào MH chính”",
+    ],
+    note: VI_SAFARI_ONLY,
+    action: "Sao chép link",
+  },
+  ios: {
+    title: "ADD_TO_HOME",
+    heading: "Chơi như một app",
+    steps: [VI_SHARE, VI_ADD, VI_OPEN],
+    action: "Đã hiểu",
+  },
+  "ios-other": {
+    title: "OPEN_IN_SAFARI",
+    heading: "Mở bằng Safari",
+    steps: [
+      "Mở lại link này bằng app Safari — hoặc bấm “Sao chép link” bên dưới rồi dán vào Safari",
+      "Trong Safari: " + VI_SHARE.charAt(0).toLowerCase() + VI_SHARE.slice(1),
+      VI_ADD,
+    ],
+    note: VI_SAFARI_ONLY,
+    action: "Sao chép link",
+  },
+  android: {
+    title: "ADD_TO_HOME",
+    heading: "Chơi như một app",
+    steps: [
+      "Mở menu trình duyệt — ⋮ ở trên (Chrome) hoặc ≡ ở dưới (Samsung Internet)",
+      "Chọn “Cài đặt ứng dụng” hoặc “Thêm vào màn hình chính”",
+      VI_OPEN,
+    ],
+    action: "Đã hiểu",
+    installAction: "Cài app",
+  },
+};
+
 let deferredPrompt = null;
 
 function buildModal(platform, text) {
-  const copy = { ...COPY[platform], ...(text || {})[platform] };
+  const copy = { ...(getLang() === "vi" ? COPY_VI : COPY)[platform], ...(text || {})[platform] };
   const modal = document.createElement("div");
   modal.className = "modal";
   modal.id = "modal-install";
@@ -154,7 +213,7 @@ export function maybeShowInstallHint(opts = {}) {
     if (e.target === modal) close();
   });
 
-  const copiedLabel = (copyText && copyText.copied) || "Link copied ✓";
+  const copiedLabel = (copyText && copyText.copied) || (getLang() === "vi" ? "Đã sao chép link ✓" : "Link copied ✓");
   const action = modal.querySelector("[data-action]");
   action.addEventListener("click", async () => {
     if (platform === "android" && deferredPrompt) {

@@ -1,5 +1,136 @@
 @charset "UTF-8";
-@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Waterfall&display=swap");
+/* Font đóng gói cục bộ trong assets/fonts/ (không dùng @import Google Fonts nữa):
+   - Chạy được offline (bản zip mở qua file://, không có mạng)
+   - Không bị "nhảy font": mỗi family/weight có 2 file (latin + vietnamese), thay vì
+     trước đây Google Fonts chỉ tải file vietnamese khi trình duyệt gặp ký tự có dấu —
+     main.js gọi document.fonts.load() cho Waterfall lúc mở game để cả 2 file kịp tải
+     xong (cùng server, cùng lúc) trước khi khách mở lá thư. */
+@font-face {
+  font-family: "Be Vietnam Pro";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../assets/fonts/bevietnampro-400-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Be Vietnam Pro";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../assets/fonts/bevietnampro-400-vietnamese.woff2") format("woff2");
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: "Be Vietnam Pro";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../assets/fonts/bevietnampro-500-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Be Vietnam Pro";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../assets/fonts/bevietnampro-500-vietnamese.woff2") format("woff2");
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: "Be Vietnam Pro";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../assets/fonts/bevietnampro-600-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Be Vietnam Pro";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../assets/fonts/bevietnampro-600-vietnamese.woff2") format("woff2");
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: "Be Vietnam Pro";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../assets/fonts/bevietnampro-700-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Be Vietnam Pro";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../assets/fonts/bevietnampro-700-vietnamese.woff2") format("woff2");
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: "Be Vietnam Pro";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("../assets/fonts/bevietnampro-800-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Be Vietnam Pro";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("../assets/fonts/bevietnampro-800-vietnamese.woff2") format("woff2");
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  /* chỉ dùng cho chữ ASCII (giao diện game) nên chỉ cần subset latin */
+  font-family: "Press Start 2P";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../assets/fonts/pressstart2p-400-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* VT323: font pixel CÓ dấu tiếng Việt, thay Press Start 2P ở bản tiếng Việt (html[lang="vi"])
+   và ở câu có dấu do khách viết (.vn-text). size-adjust phóng cho chữ hoa cao bằng Press Start 2P
+   (VT323 0.56em, Press Start 2P 0.875em) nên mọi font-size cũ trong file giữ nguyên được. */
+@font-face {
+  font-family: "VT323 Title";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  size-adjust: 160%;
+  src: url("../assets/fonts/vt323-400-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "VT323 Title";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  size-adjust: 160%;
+  src: url("../assets/fonts/vt323-400-vietnamese.woff2") format("woff2");
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: "Waterfall";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../assets/fonts/waterfall-400-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Waterfall";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../assets/fonts/waterfall-400-vietnamese.woff2") format("woff2");
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
 
 /* ============================================================
    MADE FOR US — hệ UI "cửa sổ retro" (theo mẫu UI-CoupleData-Panel):
@@ -21,9 +152,22 @@
   --bad: #e8615f;
   --night1: #1b1638;
   --night2: #4a2b5e;
-  /* Press Start 2P không có chữ có dấu tiếng Việt và ký hiệu → rơi xuống Be Vietnam Pro từng ký tự */
+  /* Press Start 2P không có chữ có dấu tiếng Việt → bản tiếng Việt đổi --font-title sang VT323.
+     --font-brand: chữ thương hiệu / tên cửa sổ kiểu file (MADE_FOR_US.EXE…) giữ Press Start 2P ở cả
+     hai bản; nếu chữ đó có dấu thì main.js gắn .vn-text để cả câu chuyển sang VT323. */
+  --font-vn: "VT323 Title", "Be Vietnam Pro", monospace;
   --font-title: "Press Start 2P", "Be Vietnam Pro", monospace;
+  --font-brand: "Press Start 2P", "VT323 Title", monospace;
   --font-body: "Be Vietnam Pro", -apple-system, BlinkMacSystemFont, sans-serif;
+  /* game chỉ thiết kế giao diện sáng: không cho Chrome / Samsung Internet tự đảo màu tối */
+  color-scheme: only light;
+}
+html[lang="vi"] { --font-title: var(--font-vn); }
+/* Máy để giao diện tối: vẫn giữ nguyên bảng màu sáng. Khai báo rõ nhánh dark để các trình
+   duyệt tự làm tối (Samsung Internet, Opera…) thấy trang đã tự lo chế độ tối và không đảo màu. */
+@media (prefers-color-scheme: dark) {
+  :root { color-scheme: only light; }
+  html, body { background: var(--bg); color: var(--ink-soft); }
 }
 
 * { box-sizing: border-box; }
@@ -85,7 +229,7 @@ button { font-family: var(--font-body); cursor: pointer; }
   padding: 8px 10px;
   background: var(--accent);
   color: #fff;
-  font-family: var(--font-title);
+  font-family: var(--font-brand);
   font-size: 10px;
   letter-spacing: 1px;
   border-bottom: 3px solid var(--ink);
@@ -138,7 +282,7 @@ button { font-family: var(--font-body); cursor: pointer; }
 .title-win, .ending-win { max-width: 420px; }
 .title-card { padding: 22px 22px 18px; }
 .game-title {
-  font-family: var(--font-title);
+  font-family: var(--font-brand);
   font-size: clamp(22px, 5.6vw, 34px);
   color: var(--accent);
   text-shadow: 3px 3px 0 #fff, 6px 6px 0 var(--ink);
@@ -506,7 +650,7 @@ button { font-family: var(--font-body); cursor: pointer; }
 }
 
 /* ---------------- ĐIỂM & ĐỒNG HỒ ---------------- */
-.hud-stats { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; font-family: var(--font-title); font-size: 9px; color: var(--ink); flex: 0 0 auto; line-height: 1; }
+.hud-stats { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; font-family: var(--font-brand); font-size: 9px; color: var(--ink); flex: 0 0 auto; line-height: 1; }
 .hud-stats #hud-score::before { content: "\2605  "; color: var(--gold); }
 .hud-stats #hud-time { color: var(--ink-dim); }
 .meet-stats { font-family: var(--font-title); font-size: 9px; line-height: 2; color: #cfc4e6; margin: -10px 0 20px; letter-spacing: 0.5px; animation: rise 1.4s ease-out; }
@@ -594,6 +738,9 @@ button { font-family: var(--font-body); cursor: pointer; }
 .sound-btn:active { transform: translate(1px, 1px); box-shadow: inset 1px 1px 0 var(--bevel-hi), inset -1px -1px 0 var(--bevel-lo), 1px 1px 0 var(--ink); }
 /* nút toàn màn hình đứng cạnh nút âm thanh; chừa chỗ ở góc phải HUD */
 .sound-btn.fs-btn { right: max(48px, calc(env(safe-area-inset-right) + 40px)); font-size: 16px; }
+/* VIE / ENG: đổi ngôn ngữ, chỉ hiện ở màn hình mở đầu (góc trên trái, không chen nút ⛶ 🔊) */
+.sound-btn.lang-btn { left: max(8px, env(safe-area-inset-left)); right: auto; width: auto; padding: 0 9px; font-family: var(--font-brand); font-size: 9px; color: var(--ink); }
+body:not(.on-title-screen) .lang-btn { display: none; }
 .hud { padding-right: 92px; }
 
 /* màn hình start: nền hồng kẻ ô pixel nhẹ */
@@ -738,3 +885,9 @@ body:has(.modal:not(.hidden)) .sound-btn { opacity: 0; pointer-events: none; }
   .ending-couple { max-height: 40vh; }
   #video-player { max-height: 56vh; margin-bottom: 10px; }
 }
+
+
+/* Câu có dấu ở chỗ dùng font pixel (tên game / tên cửa sổ khách đặt, câu nói, gợi ý…):
+   đổi cả câu sang VT323 thay vì để Press Start 2P mượn font khác cho riêng chữ có dấu.
+   Đặt cuối file để thắng .game-title / .meet-text… cùng độ ưu tiên. */
+.vn-text { font-family: var(--font-vn); }

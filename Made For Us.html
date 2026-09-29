@@ -1,7 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" translate="no">
 <head>
 <meta charset="UTF-8">
+<!-- game tự có bản tiếng Việt (js/i18n.js): tắt tự dịch của trình duyệt (dịch máy sai nghĩa, vỡ font pixel)
+     và tắt chế độ tự làm tối (Chrome/Samsung tự đảo màu làm cửa sổ hồng thành đen) -->
+<meta name="google" content="notranslate">
+<meta name="color-scheme" content="only light">
+<!-- extension Dark Reader (Chrome/Edge/Firefox) cũng hay tự đảo màu trang: khoá lại -->
+<meta name="darkreader-lock">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -47,11 +53,11 @@
         <h1 id="title-heading" class="game-title">MADE FOR US</h1>
         <p id="title-subtitle" class="game-subtitle">Our love journey</p>
         <div id="title-photo-frame" class="title-hero frame">(insert pictures here)</div>
-        <button id="btn-start" class="pixel-btn primary">▶ Start the journey</button>
-        <div class="title-tip kb-only"><img class="tip-icon" src="assets/characters/Item-Key-Helmet-01.png" alt="">◀ ▶ move · ▲ jump · ▲▲ double jump · F full screen</div>
-        <div class="title-tip kb-only">🎮 gamepad: stick / D-pad to move · A to jump</div>
+        <button id="btn-start" class="pixel-btn primary" data-i18n="start">▶ Start the journey</button>
+        <div class="title-tip kb-only"><img class="tip-icon" src="assets/characters/Item-Key-Helmet-01.png" alt=""><span data-i18n="tipKeyboard">◀ ▶ move · ▲ jump · ▲▲ double jump · F full screen</span></div>
+        <div class="title-tip kb-only" data-i18n="tipGamepad">🎮 gamepad: stick / D-pad to move · A to jump</div>
         <div id="title-rotate-tip" class="title-tip tip-plain touch-only">⟳ Hold your device sideways to play</div>
-        <button id="title-install-tip" class="title-tip tip-link touch-only">+ Add to Home Screen — play full screen</button>
+        <button id="title-install-tip" class="title-tip tip-link touch-only" data-i18n="tipInstall">+ Add to Home Screen — play full screen</button>
       </div>
     </div>
   </section>
@@ -74,7 +80,7 @@
     <div id="hud-hint" class="hud-hint hidden"></div>
     <div id="bubble-man" class="speech-bubble hidden"></div>
     <div class="level-bottom-ui">
-      <div class="controls-hint"><span class="hint-kb">◀ ▶ move · ▲ jump · ▲▲ double jump · tap to open</span><span class="hint-touch">hold ◀ ▶ to move · tap ▲ to jump · tap ▲ twice to jump higher</span></div>
+      <div class="controls-hint"><span class="hint-kb" data-i18n="controlsKeyboard">◀ ▶ move · ▲ jump · ▲▲ double jump · tap to open</span><span class="hint-touch" data-i18n="controlsTouch">hold ◀ ▶ to move · tap ▲ to jump · tap ▲ twice to jump higher</span></div>
       <div class="touch-controls">
         <div class="pad-left">
           <button id="btn-left" class="touch-btn">◀</button>
@@ -97,7 +103,7 @@
       <img class="meet-couple" src="assets/characters/Couple-Pose-Happy-01.png" alt="">
       <p id="meet-text" class="meet-text"></p>
       <div id="meet-stats" class="meet-stats"></div>
-      <button id="btn-meet-continue" class="pixel-btn primary">Continue ▸</button>
+      <button id="btn-meet-continue" class="pixel-btn primary" data-i18n="continue">Continue ▸</button>
     </div>
   </section>
 
@@ -109,29 +115,30 @@
         <div class="shackle"></div>
         <div class="lock-body"><div class="keyhole"></div></div>
       </div>
-      <div class="unlock-title">Level Unlocked</div>
-      <button id="btn-unlock-continue" class="pixel-btn primary">Continue ▸</button>
+      <div class="unlock-title" data-i18n="levelUnlocked">Level Unlocked</div>
+      <button id="btn-unlock-continue" class="pixel-btn primary" data-i18n="continue">Continue ▸</button>
     </div>
   </section>
 
   <!-- ============ ENDING ============ -->
   <section id="screen-ending" class="screen pink-bg">
     <div class="win ending-win">
-      <div class="win-bar"><span>Completed</span><i class="win-x">✕</i></div>
+      <div class="win-bar"><span data-i18n="endingTitle">Completed</span><i class="win-x">✕</i></div>
       <div class="win-body ending-content">
         <img class="ending-couple" src="assets/characters/Scene-Terrace-Bike-Iso-01.png" alt="">
         <div class="ending-row">
-          <button id="btn-ending-letter" class="pixel-btn primary">💌 Love letter</button>
-          <button id="btn-ending-video" class="pixel-btn primary">🎬 Little movie</button>
+          <button id="btn-ending-letter" class="pixel-btn primary" data-i18n="endingLetter">💌 Love letter</button>
+          <button id="btn-ending-video" class="pixel-btn primary" data-i18n="endingVideo">🎬 Little movie</button>
         </div>
-        <div class="ending-sub">— or ride it again —</div>
-        <button id="btn-play-again" class="pixel-btn">▶ Play again</button>
+        <div class="ending-sub" data-i18n="endingSub">— or ride it again —</div>
+        <button id="btn-play-again" class="pixel-btn" data-i18n="playAgain">▶ Play again</button>
       </div>
     </div>
   </section>
 
 </div>
 
+<button id="btn-lang" class="sound-btn lang-btn" aria-label="Chuyển sang tiếng Việt">VIE</button>
 <button id="btn-fullscreen" class="sound-btn fs-btn" aria-label="Full screen">⛶</button>
 <button id="btn-sound" class="sound-btn" aria-label="Sound on">🔊</button>
 
@@ -152,9 +159,9 @@
   <div class="win small">
     <div class="win-bar danger"><span>GAME_OVER</span><i class="win-x">✕</i></div>
     <div class="win-body">
-      <div class="box-title">Out of hearts!</div>
-      <div class="box-text">The gifts you found are safe. Try that stretch again.</div>
-      <button id="btn-retry" class="pixel-btn primary">↻ Try again</button>
+      <div class="box-title" data-i18n="gameOverTitle">Out of hearts!</div>
+      <div class="box-text" data-i18n="gameOverText">The gifts you found are safe. Try that stretch again.</div>
+      <button id="btn-retry" class="pixel-btn primary" data-i18n="tryAgain">↻ Try again</button>
     </div>
   </div>
 </div>
@@ -166,9 +173,9 @@
       <div id="system-text" class="system-text"></div>
       <div id="system-reply" class="system-reply"></div>
       <div class="system-buttons">
-        <button id="btn-sys-maybe" class="pixel-btn">Maybe</button>
-        <button id="btn-sys-yes" class="pixel-btn primary">Definitely!</button>
-        <button id="btn-sys-stop" class="pixel-btn">Stop!</button>
+        <button id="btn-sys-maybe" class="pixel-btn" data-i18n="sysMaybe">Maybe</button>
+        <button id="btn-sys-yes" class="pixel-btn primary" data-i18n="sysYes">Definitely!</button>
+        <button id="btn-sys-stop" class="pixel-btn" data-i18n="sysStop">Stop!</button>
       </div>
     </div>
   </div>
@@ -180,10 +187,10 @@
     <div class="win-body">
       <div class="envelope">
         <div class="envelope-flap"></div>
-        <div class="envelope-stamp">CONFIDENTIAL</div>
+        <div class="envelope-stamp" data-i18n="stampConfidential">CONFIDENTIAL</div>
         <div id="envelope-label" class="envelope-label"></div>
       </div>
-      <button id="btn-open-letter" class="pixel-btn primary">Read ➜</button>
+      <button id="btn-open-letter" class="pixel-btn primary" data-i18n="readLetter">Read ➜</button>
     </div>
   </div>
 </div>
@@ -194,7 +201,7 @@
     <div class="win-body letter-body">
       <img class="letter-scene" src="assets/characters/Scene-Terrace-Sitting-Iso-01.png" alt="">
       <pre id="letter-text" class="letter-text"></pre>
-      <button id="btn-watch-video" class="pixel-btn primary">🎬 Watch the little movie</button>
+      <button id="btn-watch-video" class="pixel-btn primary" data-i18n="continueJourney">Continue the journey ▸</button>
     </div>
   </div>
 </div>
@@ -205,7 +212,7 @@
     <div class="win-body video-body">
       <video id="video-player" controls playsinline preload="metadata"></video>
       <div id="video-missing" class="box-text hidden">Wait for your video 🎬</div>
-      <button id="btn-video-done" class="pixel-btn primary">Continue ▸</button>
+      <button id="btn-video-done" class="pixel-btn primary" data-i18n="continue">Continue ▸</button>
     </div>
   </div>
 </div>
@@ -502,6 +509,253 @@ const SOLO_SEGMENTS = [
 return { MAX_HEARTS, SOLO_SEG_W, WALK_TERRAIN, BOSS_TERRAIN, MEET_TERRAIN, COUPLE_TERRAIN, SOLO_SEGMENTS };
 })();
 
+const __mod_i18n = (() => {
+// ============================================================
+// Ngôn ngữ giao diện: mặc định tiếng Anh. Người chơi bấm nút VIE ở màn hình mở đầu để đổi
+// sang tiếng Việt (bấm ENG để đổi lại); lựa chọn được nhớ cho lần mở sau. Không tự đổi theo
+// ngôn ngữ máy. Link có ?lang=vi hoặc ?lang=en thì mở thẳng ngôn ngữ đó (thử nghiệm).
+//
+// Chỉ lo phần chữ CỐ ĐỊNH của game (nút, gợi ý, hộp thoại). Chữ do khách viết trong
+// config.js dùng nguyên văn; muốn hai thứ tiếng thì viết { en: "...", vi: "..." } (xem pick()).
+// ============================================================
+
+// nhớ theo từng bản (path): demo và các bản khách chung một tên miền klinaluu.github.io
+const STORE_KEY = "mfu-lang:" + location.pathname;
+
+function initialLang() {
+  try {
+    const forced = new URLSearchParams(location.search).get("lang");
+    if (forced === "vi" || forced === "en") return forced;
+  } catch (e) {
+    /* không đọc được URL */
+  }
+  try {
+    const saved = localStorage.getItem(STORE_KEY);
+    if (saved === "vi" || saved === "en") return saved;
+  } catch (e) {
+    /* chế độ riêng tư */
+  }
+  return "en";
+}
+
+let lang = initialLang();
+
+function getLang() {
+  return lang;
+}
+
+function setLang(next) {
+  lang = next === "vi" ? "vi" : "en";
+  try {
+    localStorage.setItem(STORE_KEY, lang);
+  } catch (e) {
+    /* chế độ riêng tư: chỉ đổi cho lần này */
+  }
+}
+
+const STRINGS = {
+  en: {
+    // ---- mặc định cho các mục TEXT trong config.js ----
+    manLine: "Found you.",
+    meetText: "I'm on my solo mission but the stars guide me to you",
+    systemMessage: "The next level is not unlocked yet.\nWould you like to continue the journey?",
+    envelopeLabel: "Highly confidential document",
+    letterTitle: "Your love letter",
+    letter: "Write your love letter",
+    videoMissing: "Wait for your video 🎬",
+    photoPlaceholder: "(insert pictures here)",
+    rotateTitle: "Please rotate to landscape",
+    rotateText: "This journey is made for a sideways screen.",
+    rotateTip: "⟳ Hold your device sideways to play",
+
+    // ---- màn hình mở đầu ----
+    loading: "Loading…",
+    start: "▶ Start the journey",
+    tipKeyboard: "◀ ▶ move · ▲ jump · ▲▲ double jump · F full screen",
+    tipGamepad: "🎮 gamepad: stick / D-pad to move · A to jump",
+    tipInstall: "+ Add to Home Screen — play full screen",
+
+    // ---- lúc chơi ----
+    controlsKeyboard: "◀ ▶ move · ▲ jump · ▲▲ double jump · tap to open",
+    controlsTouch: "hold ◀ ▶ to move · tap ▲ to jump · tap ▲ twice to jump higher",
+    hintGear: "Grab your key and helmet, then hop on the bike",
+    hintGearDone: "All set — hop on the bike!",
+    hintSolo: "Collect all 5 gifts — press ▲ twice to jump higher",
+    hintAllGifts: "All 5 gifts! Now go find her ♥",
+    hintBoss: "A cloud of doubt! Jump over it 3 times",
+    hintDodge: "Nice! {n}/3",
+    hintBossDone: "Doubt cleared — the road is open ✦",
+    hintRain: "It's raining! Jump the walls and grab the umbrella",
+    hintRainDone: "Rain's over — let's keep going ♥",
+    hintLastStop: "One more stop — keep riding ♥",
+    together: "Together ♥",
+    level2: "Level 2 · unlocked ♥",
+    missionStats: "MISSION COMPLETE<br>score <b>{score}</b> · time <b>{time}</b> · gifts <b>{gifts}</b>",
+
+    // ---- chữ vẽ trên canvas (engine) ----
+    popCollectFirst: "Collect all 5 gifts first!",
+    popForgot: "Forgot your {x}!",
+    popRide: "Let's ride!",
+    popDoubtCleared: "Doubt cleared ✦",
+    popRainOver: "☂ Rain's over",
+    gearKey: "Key",
+    gearHelmet: "Helmet",
+    itemUmbrella: "Umbrella",
+    itemEgg: "Golden egg",
+    promptOpen: "Open",
+    bikeMine: "MY BIKE",
+    bikeGo: "LET'S GO",
+    bossDoubt: "DOUBT",
+
+    // ---- hộp thoại & màn hình ----
+    continue: "Continue ▸",
+    levelUnlocked: "Level Unlocked",
+    gameOverTitle: "Out of hearts!",
+    gameOverText: "The gifts you found are safe. Try that stretch again.",
+    tryAgain: "↻ Try again",
+    sysMaybe: "Maybe",
+    sysYes: "Definitely!",
+    sysStop: "Stop!",
+    sysReplyMaybe: "> Maybe? Take your time… the button is still waiting.",
+    sysReplyStop: "> Nice try. That option has been disabled by admin ♥",
+    stampConfidential: "CONFIDENTIAL",
+    readLetter: "Read ➜",
+    continueJourney: "Continue the journey ▸",
+    close: "Close",
+    endingTitle: "Completed",
+    endingLetter: "💌 Love letter",
+    endingVideo: "🎬 Little movie",
+    endingSub: "— or ride it again —",
+    playAgain: "▶ Play again",
+    fullScreen: "Full screen",
+    exitFullScreen: "Exit full screen",
+    soundOn: "Sound on",
+    soundOff: "Sound off",
+    langSwitch: "VIE",
+    langSwitchLabel: "Chuyển sang tiếng Việt",
+  },
+
+  vi: {
+    manLine: "Tìm thấy em rồi.",
+    meetText: "Anh đang trên hành trình một mình, nhưng những vì sao đã dẫn anh đến bên em",
+    systemMessage: "Màn tiếp theo vẫn chưa được mở khoá.\nBạn có muốn đi tiếp hành trình không?",
+    envelopeLabel: "Tài liệu tuyệt mật",
+    letterTitle: "Lá thư gửi bạn",
+    letter: "Viết lá thư của bạn ở đây",
+    videoMissing: "Video của hai bạn sẽ ở đây 🎬",
+    photoPlaceholder: "(chèn ảnh vào đây)",
+    rotateTitle: "Xoay ngang màn hình nhé",
+    rotateText: "Hành trình này dành cho màn hình nằm ngang.",
+    rotateTip: "⟳ Xoay ngang máy để chơi",
+
+    loading: "Đang tải…",
+    start: "▶ Bắt đầu hành trình",
+    tipKeyboard: "◀ ▶ di chuyển · ▲ nhảy · ▲▲ nhảy đôi · F toàn màn hình",
+    tipGamepad: "🎮 tay cầm: cần analog / D-pad để đi · A để nhảy",
+    tipInstall: "+ Thêm vào màn hình chính — chơi toàn màn hình",
+
+    controlsKeyboard: "◀ ▶ di chuyển · ▲ nhảy · ▲▲ nhảy đôi · chạm để mở",
+    controlsTouch: "giữ ◀ ▶ để đi · chạm ▲ để nhảy · chạm ▲ hai lần để nhảy cao hơn",
+    hintGear: "Nhặt chìa khoá và mũ bảo hiểm rồi lên xe nào",
+    hintGearDone: "Đủ đồ rồi — lên xe thôi!",
+    hintSolo: "Nhặt đủ 5 món quà — chạm ▲ hai lần để nhảy cao hơn",
+    hintAllGifts: "Đủ 5 món quà rồi! Giờ đi tìm cô ấy thôi ♥",
+    hintBoss: "Mây nghi ngờ! Nhảy qua nó 3 lần",
+    hintDodge: "Giỏi lắm! {n}/3",
+    hintBossDone: "Hết nghi ngờ — đường đã thông ✦",
+    hintRain: "Trời mưa rồi! Nhảy qua tường và nhặt chiếc ô",
+    hintRainDone: "Tạnh mưa rồi — đi tiếp thôi ♥",
+    hintLastStop: "Còn một chặng nữa — đi tiếp nào ♥",
+    together: "Bên nhau ♥",
+    level2: "Màn 2 · đã mở khoá ♥",
+    missionStats: "HOÀN THÀNH NHIỆM VỤ<br>điểm <b>{score}</b> · thời gian <b>{time}</b> · quà <b>{gifts}</b>",
+
+    popCollectFirst: "Nhặt đủ 5 món quà trước đã!",
+    popForgot: "Quên {x} rồi!",
+    popRide: "Lên đường thôi!",
+    popDoubtCleared: "Hết nghi ngờ ✦",
+    popRainOver: "☂ Tạnh mưa rồi",
+    gearKey: "Chìa khoá",
+    gearHelmet: "Mũ bảo hiểm",
+    itemUmbrella: "Chiếc ô",
+    itemEgg: "Trứng vàng",
+    promptOpen: "Mở",
+    bikeMine: "XE CỦA ANH",
+    bikeGo: "ĐI THÔI",
+    bossDoubt: "NGHI NGỜ",
+
+    continue: "Tiếp tục ▸",
+    levelUnlocked: "Đã mở khoá màn mới",
+    gameOverTitle: "Hết tim rồi!",
+    gameOverText: "Quà đã nhặt vẫn còn nguyên. Thử lại đoạn này nhé.",
+    tryAgain: "↻ Thử lại",
+    sysMaybe: "Để xem đã",
+    sysYes: "Chắc chắn rồi!",
+    sysStop: "Dừng lại!",
+    sysReplyMaybe: "> Để xem đã á? Cứ từ từ… nút vẫn đang chờ nè.",
+    sysReplyStop: "> Không được đâu. Nút này đã bị admin khoá ♥",
+    stampConfidential: "TUYỆT MẬT",
+    readLetter: "Đọc thư ➜",
+    continueJourney: "Đi tiếp hành trình ▸",
+    close: "Đóng",
+    endingTitle: "Hoàn thành",
+    endingLetter: "💌 Lá thư",
+    endingVideo: "🎬 Thước phim",
+    endingSub: "— hoặc đi lại từ đầu —",
+    playAgain: "▶ Chơi lại",
+    fullScreen: "Toàn màn hình",
+    exitFullScreen: "Thoát toàn màn hình",
+    soundOn: "Bật âm thanh",
+    soundOff: "Tắt âm thanh",
+    langSwitch: "ENG",
+    langSwitchLabel: "Switch to English",
+  },
+};
+
+// Tên món quà hay gặp → tiếng Việt. Khách đặt tên khác thì giữ nguyên chữ khách viết.
+const GIFT_VI = {
+  Matcha: "Matcha",
+  Chocolate: "Sô-cô-la",
+  Flowers: "Bó hoa",
+  Lipstick: "Son môi",
+  Letter: "Lá thư",
+  Coffee: "Cà phê",
+  Camera: "Máy ảnh",
+  "Film Camera": "Máy ảnh film",
+  "Film Roll": "Cuộn phim",
+  "Blue Flower": "Hoa xanh",
+  "Gift Box": "Hộp quà",
+  "Tabby Cat": "Mèo mướp",
+  "Snow Cat": "Mèo trắng",
+};
+
+/** Chữ cố định của game theo ngôn ngữ đang dùng; {tên} trong câu được thay bằng vars.tên. */
+function t(key, vars, inLang = lang) {
+  let s = STRINGS[inLang][key] ?? STRINGS.en[key] ?? key;
+  if (vars) s = s.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? String(vars[k]) : m));
+  return s;
+}
+
+/** Chữ khách viết trong config.js: một chuỗi (dùng cho cả hai thứ tiếng) hoặc { en, vi }. */
+function pick(value) {
+  if (value && typeof value === "object" && !Array.isArray(value)) return value[lang] ?? value.en ?? value.vi ?? "";
+  return value ?? "";
+}
+
+/** Tên món quà: { en, vi } theo ngôn ngữ; tên tiếng Anh quen thuộc thì tự dịch sang tiếng Việt. */
+function giftLabel(label) {
+  const v = pick(label);
+  return lang === "vi" && GIFT_VI[v] ? GIFT_VI[v] : v;
+}
+
+/** Chữ có dấu tiếng Việt (hay ký tự ngoài bảng ASCII) — font Press Start 2P không vẽ được. */
+function hasAccents(s) {
+  return /[À-ɏḀ-ỿ]/.test(s || "");
+}
+
+return { getLang, setLang, t, pick, giftLabel, hasAccents };
+})();
+
 const __mod_audio = (() => {
 // Hiệu ứng âm thanh chiptune sinh bằng WebAudio (nhảy / nhảy đôi / bấm nút / sấm / mưa)
 // — không cần file. Nhạc nền thì phát từ file mp3 riêng (xem MUSIC_SRC ở config.js).
@@ -746,6 +1000,7 @@ const __mod_install = (() => {
 //   3. Android + Chrome → dùng sự kiện beforeinstallprompt để bật hộp thoại cài thật.
 // Máy tính không hiện gì (đã có nút toàn màn hình).
 // ============================================================
+const {getLang} = __mod_i18n;
 
 // path riêng cho từng site: GitHub Pages phục vụ mọi bản (demo lẫn từng khách)
 // dưới cùng một origin "klinaluu.github.io", nên nếu chỉ khoá theo tên biến thì
@@ -790,7 +1045,8 @@ function remember() {
   }
 }
 
-// Tên nút ghi kèm tiếng Việt trong ngoặc: điện thoại để tiếng Việt thì menu hiện chữ Việt.
+// Bản tiếng Anh ghi kèm tên nút tiếng Việt trong ngoặc: người dùng máy tiếng Anh nhưng
+// menu hệ thống có thể vẫn là tiếng Việt. Bản tiếng Việt thì ghi thẳng tên nút tiếng Việt.
 // Safari trên iPhone đời mới để nút Chia sẻ trong menu ≡ / ••• cạnh thanh địa chỉ.
 const IOS_SHARE = "Tap Share □↑ (Chia sẻ) — on newer iPhones it's inside the ≡ or ••• menu next to the address bar";
 const IOS_ADD = "Choose “Add to Home Screen” (Thêm vào MH chính) — scroll down if you don't see it";
@@ -849,10 +1105,67 @@ const COPY = {
   },
 };
 
+const VI_SHARE = "Bấm nút Chia sẻ □↑ — iPhone đời mới để nút này trong menu ≡ hoặc ••• cạnh thanh địa chỉ";
+const VI_ADD = "Chọn “Thêm vào MH chính” — không thấy thì kéo xuống dưới";
+const VI_OPEN = "Mở game từ biểu tượng mới — toàn màn hình, không còn thanh địa chỉ";
+const VI_SAFARI_ONLY = "Trên iPhone chỉ Safari mới thêm được trang web vào màn hình chính.";
+
+const COPY_VI = {
+  "in-app": {
+    title: "OPEN_IN_BROWSER",
+    heading: "Mở bằng trình duyệt",
+    steps: [
+      "Bấm menu ⋮ hoặc ••• ở góc trên",
+      "Chọn “Mở bằng trình duyệt”",
+      "Sau đó thêm vào màn hình chính để chơi toàn màn hình",
+    ],
+    action: "Sao chép link",
+  },
+  "in-app-ios": {
+    title: "OPEN_IN_SAFARI",
+    heading: "Mở bằng Safari",
+    steps: [
+      "Bấm menu ••• ở góc và chọn “Mở bằng Safari”",
+      "Không có mục đó? Bấm “Sao chép link” bên dưới, mở app Safari rồi dán vào",
+      "Trong Safari: bấm Chia sẻ, rồi chọn “Thêm vào MH chính”",
+    ],
+    note: VI_SAFARI_ONLY,
+    action: "Sao chép link",
+  },
+  ios: {
+    title: "ADD_TO_HOME",
+    heading: "Chơi như một app",
+    steps: [VI_SHARE, VI_ADD, VI_OPEN],
+    action: "Đã hiểu",
+  },
+  "ios-other": {
+    title: "OPEN_IN_SAFARI",
+    heading: "Mở bằng Safari",
+    steps: [
+      "Mở lại link này bằng app Safari — hoặc bấm “Sao chép link” bên dưới rồi dán vào Safari",
+      "Trong Safari: " + VI_SHARE.charAt(0).toLowerCase() + VI_SHARE.slice(1),
+      VI_ADD,
+    ],
+    note: VI_SAFARI_ONLY,
+    action: "Sao chép link",
+  },
+  android: {
+    title: "ADD_TO_HOME",
+    heading: "Chơi như một app",
+    steps: [
+      "Mở menu trình duyệt — ⋮ ở trên (Chrome) hoặc ≡ ở dưới (Samsung Internet)",
+      "Chọn “Cài đặt ứng dụng” hoặc “Thêm vào màn hình chính”",
+      VI_OPEN,
+    ],
+    action: "Đã hiểu",
+    installAction: "Cài app",
+  },
+};
+
 let deferredPrompt = null;
 
 function buildModal(platform, text) {
-  const copy = { ...COPY[platform], ...(text || {})[platform] };
+  const copy = { ...(getLang() === "vi" ? COPY_VI : COPY)[platform], ...(text || {})[platform] };
   const modal = document.createElement("div");
   modal.className = "modal";
   modal.id = "modal-install";
@@ -892,7 +1205,7 @@ function maybeShowInstallHint(opts = {}) {
     if (e.target === modal) close();
   });
 
-  const copiedLabel = (copyText && copyText.copied) || "Link copied ✓";
+  const copiedLabel = (copyText && copyText.copied) || (getLang() === "vi" ? "Đã sao chép link ✓" : "Link copied ✓");
   const action = modal.querySelector("[data-action]");
   action.addEventListener("click", async () => {
     if (platform === "android" && deferredPrompt) {
@@ -1001,6 +1314,17 @@ function ready(img) {
 const PX = 2;
 const q = (v) => Math.round(v / PX) * PX;
 
+// Chữ vẽ trên canvas + font pixel cho chữ đó — main.js truyền vào theo ngôn ngữ máy
+// (content.strings / content.titleFont), không truyền thì dùng tiếng Anh.
+const STR_EN = {
+  popCollectFirst: "Collect all 5 gifts first!", popForgot: "Forgot your {x}!", popRide: "Let's ride!",
+  popDoubtCleared: "Doubt cleared ✦", popRainOver: "☂ Rain's over", gearKey: "Key", gearHelmet: "Helmet",
+  itemUmbrella: "Umbrella", itemEgg: "Golden egg", promptOpen: "Open", bikeMine: "MY BIKE", bikeGo: "LET'S GO",
+  bossDoubt: "DOUBT",
+};
+let STR = STR_EN;
+let TITLE_FONT = "'Press Start 2P', monospace";
+
 class JourneyGame {
   constructor(canvas, content, images, callbacks) {
     this.canvas = canvas;
@@ -1008,10 +1332,13 @@ class JourneyGame {
     this.CW = canvas.width || CW;
     this.CH = canvas.height || CH;
     this.bottomInset = content.bottomInset || 0;
+    this.topInset = content.topInset || 0;
     this.groundY = this.CH - groundMarginFor(this.CH, this.bottomInset);
     this.images = images;
     this.cb = callbacks;
     this.content = content;
+    STR = { ...STR_EN, ...(content.strings || {}) };
+    if (content.titleFont) TITLE_FONT = content.titleFont;
     this._raf = null;
     this._destroyed = false;
 
@@ -1092,7 +1419,7 @@ class JourneyGame {
       });
       if (ms.event === "rain") {
         this.rainMs = ms;
-        this.extras.push({ id: "umbrella", label: "Umbrella", x: ms.start + ms.itemAt.x, gap: ms.itemAt.y, collected: false, ms });
+        this.extras.push({ id: "umbrella", label: STR.itemUmbrella, x: ms.start + ms.itemAt.x, gap: ms.itemAt.y, collected: false, ms });
       }
       // điểm thưởng (id "egg", vẽ bằng assets/props/Egg-Gold.png = hình trái tim) rải dọc
       // đường, vài cái phải nhảy mới tới
@@ -1100,7 +1427,7 @@ class JourneyGame {
         [[250, 40], [520, 130], [790, 60]].forEach(([dx, gap]) => {
           const x = ms.start + dx;
           const blocked = (ms.blocks || []).some((b) => Math.abs(ms.start + b.x - x) < 90) || (ms.platforms || []).some((pf) => Math.abs(ms.start + pf.x - x) < 120);
-          if (!blocked) this.extras.push({ id: "egg", label: "Golden egg", x, gap, collected: false, ms });
+          if (!blocked) this.extras.push({ id: "egg", label: STR.itemEgg, x, gap, collected: false, ms });
         });
       }
     });
@@ -1146,8 +1473,8 @@ class JourneyGame {
 
     // đoạn đi bộ: chìa khoá trên đường, mũ trên 1 viên gạch (tập nhảy), xe trùm bạt ở cuối
     this.gear = [
-      { id: "key", label: "Key", x: 230, gap: 28, collected: false },
-      { id: "helmet", label: "Helmet", x: 404, gap: 62, collected: false },
+      { id: "key", label: STR.gearKey, x: 230, gap: 28, collected: false },
+      { id: "helmet", label: STR.gearHelmet, x: 404, gap: 62, collected: false },
     ];
     this.solids.push({ x: 400, top: BLOCK, w: BLOCK, h: BLOCK, kind: "brick" });
     this.bikeX = 560;
@@ -1197,10 +1524,11 @@ class JourneyGame {
     this.keys[name] = false;
   }
 
-  resize(newWidth, newHeight, bottomInset) {
+  resize(newWidth, newHeight, bottomInset, topInset) {
     if (!newWidth || !newHeight) return;
     if (bottomInset != null) this.bottomInset = bottomInset;
-    if (newWidth === this.CW && newHeight === this.CH && bottomInset == null) return;
+    if (topInset != null) this.topInset = topInset;
+    if (newWidth === this.CW && newHeight === this.CH && bottomInset == null && topInset == null) return;
     this.canvas.width = newWidth;
     this.canvas.height = newHeight;
     this.CW = newWidth;
@@ -1473,13 +1801,13 @@ class JourneyGame {
     if (p.x > maxX) {
       if (this.phase === "solo" && !this.allCollected() && !this._hintShown) {
         this._hintShown = true;
-        this.popups.push({ x: p.x + p.w / 2, y: p.y - 10, vy: -30, life: 2.2, text: "Collect all 5 gifts first!", color: "#e0538a" });
+        this.popups.push({ x: p.x + p.w / 2, y: p.y - 10, vy: -30, life: 2.2, text: STR.popCollectFirst, color: "#e0538a" });
         setTimeout(() => (this._hintShown = false), 2500);
       }
       if (this.phase === "walk" && !this._hintShown) {
         this._hintShown = true;
         const missing = this.gear.filter((g) => !g.collected).map((g) => g.label.toLowerCase()).join(" & ");
-        this.popups.push({ x: p.x + p.w / 2, y: p.y - 10, vy: -30, life: 2.2, text: "Forgot your " + missing + "!", color: "#e0538a" });
+        this.popups.push({ x: p.x + p.w / 2, y: p.y - 10, vy: -30, life: 2.2, text: STR.popForgot.replace("{x}", missing), color: "#e0538a" });
         setTimeout(() => (this._hintShown = false), 2500);
       }
       p.x = maxX;
@@ -1577,7 +1905,7 @@ class JourneyGame {
           }
           this._dust(p.x + p.w / 2, this.groundY);
           this.shake = 0.15;
-          this.popups.push({ x: p.x + p.w / 2, y: p.y - 16, vy: -35, life: 1.6, text: "Let's ride!", color: "#e0538a" });
+          this.popups.push({ x: p.x + p.w / 2, y: p.y - 16, vy: -35, life: 1.6, text: STR.popRide, color: "#e0538a" });
           this.cb.onMount && this.cb.onMount();
         }
       }
@@ -1652,7 +1980,7 @@ class JourneyGame {
             b.defeated = true;
             b.active = false;
             this._burst(b.x + BOSS_W / 2, top + BOSS_H / 2, 30, ["#fff", "#cfc4e6", "#ffb6cf", "#f2c94c"]);
-            this.popups.push({ x: b.x + BOSS_W / 2, y: top - 10, vy: -30, life: 2, text: "Doubt cleared ✦", color: "#fff" });
+            this.popups.push({ x: b.x + BOSS_W / 2, y: top - 10, vy: -30, life: 2, text: STR.popDoubtCleared, color: "#fff" });
             this._addScore(300);
             this.shake = 0.3;
             this.cb.onBoss && this.cb.onBoss("defeated", b);
@@ -1719,7 +2047,7 @@ class JourneyGame {
             this._addScore(50, ex.x + ITEM_SIZE / 2, bottom - ITEM_SIZE);
           } else {
             this._burst(ex.x + ITEM_SIZE / 2, bottom - ITEM_SIZE / 2, 16, ["#fff", "#ffd6e4", "#ff6fa0"]);
-            this.popups.push({ x: ex.x + ITEM_SIZE / 2, y: bottom - ITEM_SIZE, vy: -45, life: 1.4, text: "☂ Rain's over", color: "#e0538a" });
+            this.popups.push({ x: ex.x + ITEM_SIZE / 2, y: bottom - ITEM_SIZE, vy: -45, life: 1.4, text: STR.popRainOver, color: "#e0538a" });
             this._addScore(150);
           }
           this.cb.onExtra && this.cb.onExtra(ex);
@@ -1745,7 +2073,7 @@ class JourneyGame {
 
     this.prompt = null;
     if (this.phase === "chest" && !this.chest.opened) {
-      if (Math.abs(p.x + p.w - this.chestX) < 60) this.prompt = { x: this.chestX + 32, y: this.groundY - 80, text: "Open" };
+      if (Math.abs(p.x + p.w - this.chestX) < 60) this.prompt = { x: this.chestX + 32, y: this.groundY - 80, text: STR.promptOpen };
     }
     if (this.phase === "gift" && this.gift.active) {
       const g = this.gift;
@@ -1761,7 +2089,7 @@ class JourneyGame {
           this._burst(this.giftX + 32, this.groundY - 30, 12, ["#fff", "#ffb6cf"]);
         }
       } else if (!g.opened && Math.abs(p.x + p.w - this.giftX) < 60) {
-        this.prompt = { x: this.giftX + 32, y: this.groundY - 80, text: "Open" };
+        this.prompt = { x: this.giftX + 32, y: this.groundY - 80, text: STR.promptOpen };
       }
     }
 
@@ -1855,11 +2183,17 @@ class JourneyGame {
     if (this.phase === "solo") drawWoman(ctx, img.woman, this.meetX, this.groundY, this.t, false);
     if (this.phase === "meeting") drawWoman(ctx, img.womanCheer[Math.floor(this.t * 4) % 2], this.meetX, this.groundY, this.t, true);
 
+    // Khung polaroid treo ngay dưới thanh HUD (dây đủ dài để không bị thanh đè lên, xem
+    // topInset) và to hết mức chiều cao còn trống phía trên mặt đường cho phép — màn hình
+    // càng cao (laptop) khung càng to, màn thấp (điện thoại nằm ngang) thì tự nhỏ lại,
+    // không bao giờ đè lên xe/HUD dưới đường.
+    const polaroidTop = Math.max(30, this.topInset);
+    const polaroidMax = Math.max(150, Math.min(280, this.groundY - polaroidTop - 70));
     for (const ms of this.milestones) {
       const photo = img.polaroids[ms.index];
       if (!photo && !this.content.emptyPolaroids) continue; // mốc không có ảnh thì không treo khung
       if (ms.polaroidX < this.camX - 300 || ms.polaroidX > this.camX + this.CW + 300) continue;
-      drawPolaroid(ctx, photo, ms.date, ms.polaroidX, Math.max(60, this.groundY - 360), this.t, ms.index, ms.name, this.content.photoPlaceholder);
+      drawPolaroid(ctx, photo, ms.date, ms.polaroidX, polaroidTop, this.t, ms.index, ms.name, this.content.photoPlaceholder, polaroidMax);
     }
 
     for (const ex of this.extras) {
@@ -2225,10 +2559,10 @@ function drawBoss(ctx, cloudImg, b, groundY, t) {
     ctx.fillRect(lx, y + h + 16, 6, 10);
   }
   // nhãn + số lần né
-  ctx.font = "9px 'Press Start 2P', monospace";
+  ctx.font = `9px ${TITLE_FONT}`;
   ctx.textAlign = "center";
   ctx.fillStyle = "#fff";
-  ctx.fillText("DOUBT", x + w / 2, y - 14);
+  ctx.fillText(STR.bossDoubt, x + w / 2, y - 14);
   for (let i = 0; i < BOSS_DODGES; i++) {
     ctx.fillStyle = i < b.dodges ? "#f2c94c" : "rgba(255,255,255,0.35)";
     ctx.fillRect(q(x + w / 2 - 18 + i * 14), y - 10, 8, 4);
@@ -2240,7 +2574,7 @@ function drawBoss(ctx, cloudImg, b, groundY, t) {
 function drawCoveredBike(ctx, image, x, groundY, t, ready_) {
   ctx.save();
   const label = () => {
-    ctx.font = "8px 'Press Start 2P', monospace";
+    ctx.font = `8px ${TITLE_FONT}`;
     ctx.textAlign = "center";
     ctx.fillStyle = ready_ && Math.floor(t * 3) % 2 === 0 ? "#f2c94c" : "#fff";
   };
@@ -2250,7 +2584,7 @@ function drawCoveredBike(ctx, image, x, groundY, t, ready_) {
     drawShadow(ctx, x + w / 2, groundY, w * 0.85, 0.22);
     ctx.drawImage(image, x, groundY - h, w, h);
     label();
-    ctx.fillText(ready_ ? "LET'S GO" : "MY BIKE", x + w / 2, groundY - h - 8);
+    ctx.fillText(ready_ ? STR.bikeGo : STR.bikeMine, x + w / 2, groundY - h - 8);
   } else {
     // bạt phủ vẽ tay: dùng khi chưa có ảnh xe riêng của khách
     const w = 120;
@@ -2272,7 +2606,7 @@ function drawCoveredBike(ctx, image, x, groundY, t, ready_) {
     ctx.fillStyle = "#fff";
     ctx.fillRect(x + 44, y + 22, 24, 4);
     label();
-    ctx.fillText(ready_ ? "LET'S GO" : "MY BIKE", x + w / 2, y - 8);
+    ctx.fillText(ready_ ? STR.bikeGo : STR.bikeMine, x + w / 2, y - 8);
   }
   ctx.restore();
 }
@@ -2432,12 +2766,29 @@ function drawWoman(ctx, image, x, groundY, t, cheer) {
 }
 
 
-// Khung polaroid: viền pixel, bóng cứng lệch, dây treo
-function drawPolaroid(ctx, photo, date, x, y, t, i, name, placeholder) {
-  // Khung ôm theo tỉ lệ ảnh thật (không crop): ảnh vừa trong hộp MAX×MAX, viền 8, đáy 44 cho chữ
-  const MAX = 190;
+// Ngắt chữ theo từ, không vượt quá maxWidth (dùng ctx.font đã set sẵn trước khi gọi)
+function wrapText(ctx, text, maxWidth) {
+  const words = text.split(" ");
+  const lines = [];
+  let line = "";
+  for (const word of words) {
+    const next = line ? line + " " + word : word;
+    if (ctx.measureText(next).width > maxWidth && line) {
+      lines.push(line);
+      line = word;
+    } else line = next;
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+// Khung polaroid: viền pixel, bóng cứng lệch, dây treo.
+// maxSize: cạnh dài nhất của ảnh (đơn vị thế giới) — render() tính theo chiều cao màn hình
+// còn trống phía trên mặt đường, nên laptop có khung to hơn điện thoại nằm ngang hẳn.
+function drawPolaroid(ctx, photo, date, x, y, t, i, name, placeholder, maxSize) {
+  // Khung ôm theo tỉ lệ ảnh thật (không crop): ảnh vừa trong hộp MAX×MAX, viền 8
+  const MAX = maxSize || 190;
   const PAD = 8;
-  const FOOT = 44;
   let iw = 130;
   let ih = 130;
   if (ready(photo)) {
@@ -2446,18 +2797,50 @@ function drawPolaroid(ctx, photo, date, x, y, t, i, name, placeholder) {
     ih = Math.round(photo.height * s);
   }
   const w = iw + PAD * 2;
+
+  // ---------- chú thích: ngày + tên mốc, đủ dấu tiếng Việt (Be Vietnam Pro như dòng điểm
+  // rơi ở trên). Mốc nào date và name đều trống thì không vẽ gì — giữ nguyên khung trắng
+  // như trước, không đổi giao diện các bản khách chủ động để trống (vd bản thaobe). ----------
+  ctx.textAlign = "center";
+  const maxTextW = w - 16;
+  const fitSize = (text, base, min, bold) => {
+    let px = base;
+    ctx.font = `${bold ? 700 : 600} ${px}px 'Be Vietnam Pro', sans-serif`;
+    while (px > min && ctx.measureText(text).width > maxTextW) {
+      px -= 1;
+      ctx.font = `${bold ? 700 : 600} ${px}px 'Be Vietnam Pro', sans-serif`;
+    }
+    return px;
+  };
+  const rows = [];
+  if (date) rows.push({ text: date, px: fitSize(date, 14, 10, true), bold: true, color: "#6b3f52" });
+  if (name) {
+    const namePx = fitSize(name, date ? 12 : 14, 9, false);
+    ctx.font = `600 ${namePx}px 'Be Vietnam Pro', sans-serif`;
+    const nameColor = date ? "#a97a92" : "#6b3f52";
+    if (ctx.measureText(name).width > maxTextW) {
+      // vẫn dài quá dù đã thu nhỏ tối đa: xuống 2 dòng thay vì tràn khỏi khung
+      for (const line of wrapText(ctx, name, maxTextW)) rows.push({ text: line, px: namePx, bold: false, color: nameColor });
+    } else {
+      rows.push({ text: name, px: namePx, bold: false, color: nameColor });
+    }
+  }
+  // FOOT=44 (như cũ) đủ chỗ cho tối đa 2 dòng; tên phải xuống dòng thứ 3 mới cần đáy cao hơn.
+  const FOOT = 44 + Math.max(0, rows.length - 2) * 14;
+
   const h = ih + PAD + FOOT;
   const bob = q(Math.sin(t * 1.4 + i) * 4);
   const rot = ((i % 2 === 0 ? -1 : 1) * 3 * Math.PI) / 180;
   ctx.save();
   ctx.translate(x + w / 2, y + h / 2 + bob);
   ctx.rotate(rot);
-  // dây treo lên trời
+  // dây treo — chỉ đủ dài chạm mép trên màn hình (y = khoảng cách từ đỉnh khung tới đó),
+  // không kéo cố định 400px như trước (thừa trên màn to, có khi hụt trên màn cao)
   ctx.strokeStyle = "rgba(43,32,48,0.5)";
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(0, -h / 2);
-  ctx.lineTo(0, -h / 2 - 400);
+  ctx.lineTo(0, -h / 2 - (y + 40));
   ctx.stroke();
   // bóng cứng
   ctx.fillStyle = "rgba(43,32,48,0.28)";
@@ -2488,17 +2871,8 @@ function drawPolaroid(ctx, photo, date, x, y, t, i, name, placeholder) {
       ctx.strokeRect(px + 5, py + 5, iw - 10, ih - 10);
       ctx.setLineDash([]);
       ctx.fillStyle = "rgba(224,83,138,0.8)";
-      ctx.font = "8px 'Press Start 2P', monospace";
-      const lines = [];
-      let line = "";
-      for (const word of placeholder.split(" ")) {
-        const next = line ? line + " " + word : word;
-        if (ctx.measureText(next).width > iw - 22 && line) {
-          lines.push(line);
-          line = word;
-        } else line = next;
-      }
-      if (line) lines.push(line);
+      ctx.font = `8px ${TITLE_FONT}`;
+      const lines = wrapText(ctx, placeholder, iw - 22);
       let ty = py + ih / 2 - (lines.length - 1) * 7;
       for (const l of lines) {
         ctx.fillText(l, 0, ty);
@@ -2508,6 +2882,18 @@ function drawPolaroid(ctx, photo, date, x, y, t, i, name, placeholder) {
       ctx.fillStyle = "rgba(224,83,138,0.35)";
       ctx.font = "26px sans-serif";
       ctx.fillText("♡", 0, py + ih / 2 + 9);
+    }
+  }
+
+  if (rows.length) {
+    ctx.textAlign = "center";
+    const lineH = 14;
+    let ly = h / 2 - 10 - (rows.length - 1) * lineH;
+    for (const row of rows) {
+      ctx.font = `${row.bold ? 700 : 600} ${row.px}px 'Be Vietnam Pro', sans-serif`;
+      ctx.fillStyle = row.color;
+      ctx.fillText(row.text, 0, ly);
+      ly += lineH;
     }
   }
   ctx.restore();
@@ -2579,7 +2965,7 @@ function drawSpeedLines(ctx, p, groundY, t) {
 function drawPrompt(ctx, x, y, text, t) {
   const bob = q(Math.sin(t * 5) * 3);
   ctx.save();
-  ctx.font = "10px 'Press Start 2P', monospace";
+  ctx.font = `10px ${TITLE_FONT}`;
   ctx.textAlign = "center";
   const w = q(ctx.measureText(text).width + 44);
   ctx.fillStyle = OUTLINE;
@@ -2623,10 +3009,38 @@ const {IMG, PROPS, PROP_SETS, SCENES, SCENE_SPEEDS, SCENE_SINK, SCENE_TOP, GRASS
 const {SOLO_SEGMENTS, SOLO_SEG_W, MAX_HEARTS, WALK_TERRAIN, BOSS_TERRAIN, MEET_TERRAIN, COUPLE_TERRAIN,} = __mod_levels;
 const {initAudio, sfx, setMuted, isMuted, initMusic, playMusic, duckMusicForVideo, setRainIntensity} = __mod_audio;
 const {initInstallHint, maybeShowInstallHint, detectPlatform, isInstalled} = __mod_install;
+const {getLang, setLang, t, pick, giftLabel, hasAccents} = __mod_i18n;
 const {JourneyGame} = __mod_engine;
+
+// Chữ trong TEXT của config.js. Để trống → câu mặc định theo ngôn ngữ đang chọn. Config khách
+// làm trước khi có bản tiếng Việt chép nguyên câu mặc định tiếng Anh: còn y nguyên thì cũng
+// coi như chưa đổi, để bấm VIE vẫn ra tiếng Việt.
+function text(key) {
+  const v = pick(TEXT[key]);
+  return !v || v === t(key, null, "en") ? t(key) : v;
+}
+
+// Font pixel cho chữ vẽ trên canvas: Press Start 2P không có chữ có dấu nên bản tiếng Việt
+// dùng VT323 (đã phóng cỡ cho khớp trong css/style.css, xem @font-face "VT323 Title").
+const titleFont = () => (getLang() === "vi" ? "'VT323 Title', monospace" : "'Press Start 2P', monospace");
+const ENGINE_KEYS = [
+  "popCollectFirst", "popForgot", "popRide", "popDoubtCleared", "popRainOver",
+  "gearKey", "gearHelmet", "itemUmbrella", "itemEgg", "promptOpen", "bikeMine", "bikeGo", "bossDoubt",
+];
+const engineStrings = () => Object.fromEntries(ENGINE_KEYS.map((k) => [k, t(k)]));
+
+// Chữ ở chỗ dùng font pixel: câu có dấu (khách viết tiếng Việt) thì đổi sang VT323 cả câu,
+// thay vì để Press Start 2P mượn font khác cho từng chữ có dấu → chữ lổn nhổn.
+function setTitleText(el, s) {
+  el.textContent = s;
+  el.classList.toggle("vn-text", hasAccents(s));
+}
 
 // Mốc đi đôi dùng chung một nền; config.js chỉ khai báo phần nội dung.
 const COUPLE_MILESTONES = MILESTONES.map((ms) => ({ ...ms, terrain: COUPLE_TERRAIN }));
+// chữ ngày/tên mốc và tên quà lấy theo ngôn ngữ lúc bắt đầu chơi (đổi được ở màn hình mở đầu)
+const giftItems = () => GIFTS.map((g) => ({ ...g, label: giftLabel(g.label) }));
+const coupleMilestones = () => COUPLE_MILESTONES.map((ms) => ({ ...ms, date: pick(ms.date), name: pick(ms.name) }));
 
 // Nền parallax: khách có thể khai báo số lớp + tốc độ riêng từng cảnh trong config.js
 // (SCENE_LAYERS), không khai báo thì dùng bộ 3 lớp mặc định của assets.js.
@@ -2713,6 +3127,16 @@ function bottomInsetFor(canvasHeight) {
   const scale = canvasHeight / (window.innerHeight || canvasHeight);
   return Math.round(padPx * scale) + 34; // chừa thêm một khoảng cho thoáng
 }
+// Thanh HUD trên cùng cao bao nhiêu (đổi sang px thế giới) — khung polaroid luôn treo
+// dưới nó, không để dây/khung bị thanh HUD đè lên trông như bị cắt cụt phía trên.
+function topInsetFor(canvasHeight) {
+  const bar = document.querySelector(".hud");
+  if (!bar) return 0;
+  const barPx = bar.getBoundingClientRect().height;
+  if (!barPx) return 0;
+  const scale = canvasHeight / (window.innerHeight || canvasHeight);
+  return Math.round(barPx * scale) + 20; // chừa thêm một khoảng cho thoáng
+}
 
 // ---------------- helpers màn hình ----------------
 const $ = (id) => document.getElementById(id);
@@ -2739,7 +3163,7 @@ function renderHearts(n) {
 function renderItemSlots(collectedIds) {
   const wrap = $("hud-items");
   wrap.innerHTML = "";
-  GIFTS.forEach((it) => {
+  giftItems().forEach((it) => {
     const slot = document.createElement("div");
     slot.className = "hud-slot" + (collectedIds.has(it.id) ? " got" : "");
     slot.title = it.label;
@@ -2758,9 +3182,9 @@ function renderItemSlots(collectedIds) {
   });
 }
 let hintTimer = null;
-function showHint(text, ms = 2600) {
+function showHint(msg, ms = 2600) {
   const el = $("hud-hint");
-  el.textContent = text;
+  setTitleText(el, msg);
   el.classList.remove("hidden");
   clearTimeout(hintTimer);
   hintTimer = setTimeout(() => el.classList.add("hidden"), ms);
@@ -2792,7 +3216,7 @@ function hudSoloMode() {
 function renderMilestoneLabel(ms) {
   const el = $("hud-milestone");
   if (!ms.date && !ms.name) {
-    el.textContent = "Together ♥";
+    el.textContent = t("together");
     return;
   }
   const date = document.createElement("b");
@@ -2805,7 +3229,7 @@ function hudCoupleMode() {
   $("hud-milestone").classList.remove("hidden");
   $("hud-portrait").classList.remove("hidden");
   $("hud-stats").classList.remove("hidden");
-  $("hud-milestone").textContent = "Together ♥";
+  $("hud-milestone").textContent = t("together");
   renderBar(0);
 }
 
@@ -2852,14 +3276,14 @@ function startJourney() {
   if (currentGame) currentGame.destroy();
   currentGame = new JourneyGame(
     canvas,
-    { soloSegments: SOLO_SEGMENTS, soloSegW: SOLO_SEG_W, walkTerrain: WALK_TERRAIN, bossTerrain: BOSS_TERRAIN, meetTerrain: MEET_TERRAIN, items: GIFTS, milestones: COUPLE_MILESTONES, maxHearts: MAX_HEARTS, grassScenes: GRASS_SCENES, propSets: PROP_SETS, bottomInset: bottomInsetFor(size.height), emptyPolaroids: SHOW_EMPTY_PHOTO_FRAMES, photoPlaceholder: TEXT.photoPlaceholder },
+    { soloSegments: SOLO_SEGMENTS, soloSegW: SOLO_SEG_W, walkTerrain: WALK_TERRAIN, bossTerrain: BOSS_TERRAIN, meetTerrain: MEET_TERRAIN, items: giftItems(), milestones: coupleMilestones(), maxHearts: MAX_HEARTS, grassScenes: GRASS_SCENES, propSets: PROP_SETS, bottomInset: bottomInsetFor(size.height), topInset: topInsetFor(size.height), emptyPolaroids: SHOW_EMPTY_PHOTO_FRAMES, photoPlaceholder: text("photoPlaceholder"), strings: engineStrings(), titleFont: titleFont() },
     images,
     {
       onItem: (item, count, total) => {
         collected.add(item.id);
         renderItemSlots(collected);
         renderBar((count / total) * 100);
-        showHint(count < total ? `${item.label} ✓  ·  ${count}/${total}` : "All 5 gifts! Now go find her ♥", count < total ? 1800 : 3200);
+        showHint(count < total ? `${item.label} ✓  ·  ${count}/${total}` : t("hintAllGifts"), count < total ? 1800 : 3200);
       },
       onHearts: (n) => renderHearts(n),
       onGameOver: () => showModal("modal-gameover"),
@@ -2872,21 +3296,21 @@ function startJourney() {
         // mốc không ghi ngày/tên (vd bản khách bỏ chú thích) thì giữ dòng "Together", không để trống ô HUD
         renderMilestoneLabel(ms);
         renderBar((j / COUPLE_MILESTONES.length) * 100);
-        if (ms.event === "rain") showHint("It's raining! Jump the walls and grab the umbrella", 3600);
+        if (ms.event === "rain") showHint(t("hintRain"), 3600);
       },
-      onExtra: (ex) => { if (ex.id === "umbrella") showHint("Rain's over — let's keep going ♥", 2600); },
+      onExtra: (ex) => { if (ex.id === "umbrella") showHint(t("hintRainDone"), 2600); },
       onThunder: () => sfx("thunder"),
       onRain: (k) => setRainIntensity(k),
       onChest: () => openSystemMessage(),
       onGift: () => openVideo(false),
       onScore: (n) => renderScore(n),
       onJump: (k) => sfx(k === 2 ? "jump2" : "jump"),
-      onGear: (ge, ready) => showHint(ready ? "All set — hop on the bike!" : `${ge.label} ✓`, ready ? 2600 : 1400),
-      onMount: () => setTimeout(() => showHint("Collect all 5 gifts — press ▲ twice to jump higher", 3600), 900),
+      onGear: (ge, ready) => showHint(ready ? t("hintGearDone") : `${ge.label} ✓`, ready ? 2600 : 1400),
+      onMount: () => setTimeout(() => showHint(t("hintSolo"), 3600), 900),
       onBoss: (ev, b) => {
-        if (ev === "start") showHint("A cloud of doubt! Jump over it 3 times", 3200);
-        if (ev === "dodge" && b.dodges < 3) showHint(`Nice! ${b.dodges}/3`, 1200);
-        if (ev === "defeated") showHint("Doubt cleared — the road is open ✦", 3000);
+        if (ev === "start") showHint(t("hintBoss"), 3200);
+        if (ev === "dodge" && b.dodges < 3) showHint(t("hintDodge", { n: b.dodges }), 1200);
+        if (ev === "defeated") showHint(t("hintBossDone"), 3000);
       },
     }
   );
@@ -2899,13 +3323,13 @@ function startJourney() {
   timeTimer = setInterval(() => {
     if (currentGame && currentGame.phase === "solo") $("hud-time").textContent = fmtTime(currentGame.timeSolo);
   }, 250);
-  setTimeout(() => showHint("Grab your key and helmet, then hop on the bike", 3600), 600);
+  setTimeout(() => showHint(t("hintGear"), 3600), 600);
 }
 
 // --- chương 2: gặp nhau ---
 function playMeeting() {
   const bubble = $("bubble-man");
-  bubble.textContent = TEXT.manLine;
+  setTitleText(bubble, text("manLine"));
   // đặt bong bóng ngay trên đầu nhân vật (đổi toạ độ canvas → % màn hình)
   const g = currentGame;
   bubble.style.left = ((g.player.x + g.player.w * 0.5 - g.camX) / g.CW) * 100 + "%";
@@ -2913,30 +3337,30 @@ function playMeeting() {
   bubble.classList.remove("hidden");
   setTimeout(() => {
     bubble.classList.add("hidden");
-    $("meet-text").textContent = TEXT.meetText;
+    setTitleText($("meet-text"), text("meetText"));
     $("meet-stats").innerHTML =
-      `MISSION COMPLETE<br>score <b>${g.score}</b> · time <b>${fmtTime(g.timeSolo)}</b> · gifts <b>${GIFTS.length}/${GIFTS.length}</b>`;
+      t("missionStats", { score: g.score, time: fmtTime(g.timeSolo), gifts: `${GIFTS.length}/${GIFTS.length}` });
     showScreen("screen-meet");
   }, 1900);
 }
 
 // --- chương 4: hòm hồng → System Message ---
 function openSystemMessage() {
-  $("system-text").textContent = TEXT.systemMessage;
+  $("system-text").textContent = text("systemMessage");
   $("system-reply").textContent = "";
   showModal("modal-system");
 }
 
 // --- hòm quà → thư → video ---
 function openEnvelope() {
-  $("envelope-label").textContent = TEXT.envelopeLabel;
+  setTitleText($("envelope-label"), text("envelopeLabel"));
   showModal("modal-envelope");
 }
 function openLetter(fromEnding) {
-  $("letter-text").textContent = TEXT.letter;
+  $("letter-text").textContent = text("letter");
   $("letter-close").classList.toggle("hidden", !fromEnding);
   $("btn-watch-video").classList.toggle("hidden", fromEnding);
-  $("btn-watch-video").textContent = "Continue the journey ▸";
+  $("btn-watch-video").textContent = t("continueJourney");
   showModal("modal-letter");
 }
 function openVideo(fromEnding) {
@@ -2952,7 +3376,7 @@ function openVideo(fromEnding) {
     video.classList.add("hidden");
     missing.classList.remove("hidden");
   }
-  $("btn-video-done").textContent = fromEnding ? "Close" : "Continue ▸";
+  $("btn-video-done").textContent = fromEnding ? t("close") : t("continue");
   $("btn-video-done").dataset.fromEnding = fromEnding ? "1" : "";
   showModal("modal-video");
 }
@@ -2995,7 +3419,7 @@ function wireUI() {
   const fsBtn = $("btn-fullscreen");
   const renderFs = () => {
     fsBtn.textContent = isFs() ? "✕" : "⛶";
-    fsBtn.setAttribute("aria-label", isFs() ? "Exit full screen" : "Full screen");
+    fsBtn.setAttribute("aria-label", isFs() ? t("exitFullScreen") : t("fullScreen"));
   };
   if (!fsSupported) fsBtn.classList.add("hidden");
   fsBtn.addEventListener("click", () => (isFs() ? exitFs() : enterFs()));
@@ -3005,6 +3429,15 @@ function wireUI() {
     if (e.key === "f" || e.key === "F") (isFs() ? exitFs() : enterFs());
   });
   renderFs();
+
+  // VIE / ENG ở màn hình mở đầu: đổi ngôn ngữ ngay tại chỗ (không tải lại trang), nhớ cho lần sau
+  $("btn-lang").addEventListener("click", () => {
+    setLang(getLang() === "vi" ? "en" : "vi");
+    applyLanguage();
+    applyBranding();
+    renderFs();
+    renderSound();
+  });
 
   $("btn-start").addEventListener("click", () => {
     enterFs();
@@ -3031,7 +3464,7 @@ function wireUI() {
   const soundBtn = $("btn-sound");
   const renderSound = () => {
     soundBtn.textContent = isMuted() ? "🔇" : "🔊";
-    soundBtn.setAttribute("aria-label", isMuted() ? "Sound off" : "Sound on");
+    soundBtn.setAttribute("aria-label", isMuted() ? t("soundOff") : t("soundOn"));
   };
   renderSound();
   soundBtn.addEventListener("click", () => {
@@ -3058,13 +3491,13 @@ function wireUI() {
   });
 
   $("btn-sys-maybe").addEventListener("click", () => {
-    $("system-reply").textContent = "> Maybe? Take your time… the button is still waiting.";
+    $("system-reply").textContent = t("sysReplyMaybe");
     $("modal-system").querySelector(".win").classList.remove("shake");
     void $("modal-system").offsetWidth;
     $("modal-system").querySelector(".win").classList.add("shake");
   });
   $("btn-sys-stop").addEventListener("click", () => {
-    $("system-reply").textContent = "> Nice try. That option has been disabled by admin ♥";
+    $("system-reply").textContent = t("sysReplyStop");
     $("modal-system").querySelector(".win").classList.remove("shake");
     void $("modal-system").offsetWidth;
     $("modal-system").querySelector(".win").classList.add("shake");
@@ -3075,7 +3508,7 @@ function wireUI() {
   });
   $("btn-unlock-continue").addEventListener("click", () => {
     showScreen("screen-level");
-    $("hud-milestone").textContent = "Level 2 · unlocked ♥";
+    $("hud-milestone").textContent = t("level2");
     openEnvelope();
   });
 
@@ -3088,7 +3521,7 @@ function wireUI() {
   $("btn-watch-video").addEventListener("click", () => {
     hideModal("modal-letter");
     currentGame && currentGame.resumeJourney();
-    showHint("One more stop — keep riding ♥", 3000);
+    showHint(t("hintLastStop"), 3000);
   });
   $("video-player").addEventListener("error", () => {
     $("video-player").classList.add("hidden");
@@ -3141,7 +3574,7 @@ function wireUI() {
     resizeTimer = setTimeout(() => {
       if (!currentGame) return;
       const s = canvasSizeForViewport();
-      currentGame.resize(s.width, s.height, bottomInsetFor(s.height));
+      currentGame.resize(s.width, s.height, bottomInsetFor(s.height), topInsetFor(s.height));
     }, 150);
   });
 }
@@ -3207,10 +3640,10 @@ function wireGamepad() {
 
 // Đổ nội dung từ config.js vào giao diện (một nguồn duy nhất để cá nhân hoá)
 function applyBranding() {
-  document.title = GAME_TITLE;
-  $("title-heading").textContent = GAME_TITLE;
-  $("title-subtitle").textContent = GAME_SUBTITLE;
-  $("title-window-name").textContent = WINDOW_NAME;
+  document.title = pick(GAME_TITLE);
+  setTitleText($("title-heading"), pick(GAME_TITLE));
+  $("title-subtitle").textContent = pick(GAME_SUBTITLE);
+  setTitleText($("title-window-name"), pick(WINDOW_NAME));
   const frame = $("title-photo-frame");
   if (TITLE_PHOTO) {
     frame.className = "title-hero photo";
@@ -3220,27 +3653,50 @@ function applyBranding() {
     img.alt = "";
     frame.appendChild(img);
   } else {
-    frame.textContent = TEXT.photoPlaceholder;
+    frame.textContent = text("photoPlaceholder");
   }
-  $("letter-window-name").textContent = TEXT.letterTitle;
-  $("rotate-title").textContent = TEXT.rotateTitle;
-  $("rotate-text").textContent = TEXT.rotateText;
-  $("title-rotate-tip").textContent = TEXT.rotateTip;
-  $("video-missing").textContent = TEXT.videoMissing;
+  setTitleText($("letter-window-name"), text("letterTitle"));
+  $("rotate-title").textContent = text("rotateTitle");
+  $("rotate-text").textContent = text("rotateText");
+  $("title-rotate-tip").textContent = text("rotateTip");
+  $("video-missing").textContent = text("videoMissing");
+}
+
+// Chữ cố định trong index.html (các phần tử có data-i18n) → đúng ngôn ngữ máy
+function applyLanguage() {
+  document.documentElement.lang = getLang();
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    const s = t(el.dataset.i18n);
+    if (el.closest(".win-bar")) setTitleText(el, s);
+    else el.textContent = s;
+  });
+  const startBtn = $("btn-start");
+  if (startBtn.disabled) startBtn.textContent = t("loading"); // đang tải ảnh thì giữ chữ "Đang tải…"
+  const langBtn = $("btn-lang");
+  langBtn.textContent = t("langSwitch");
+  langBtn.setAttribute("aria-label", t("langSwitchLabel"));
 }
 
 async function init() {
   document.body.classList.add("on-title-screen"); // màn hình mặc định khi tải trang là title
+  applyLanguage();
   applyBranding();
   wireUI();
   initInstallHint({ text: TEXT.install });
   initMusic(MUSIC_SRC);
+  // Tải trước font Waterfall (cả 2 file latin + vietnamese) từ lúc mở trang — chuyện mở lá
+  // thư có thể xảy ra rất lâu sau (giữa game), nên tải sớm để lúc đó không bị "nhảy" từ
+  // font dự phòng sang Waterfall giữa chừng khi trình duyệt vừa tải xong.
+  if (document.fonts && document.fonts.load) {
+    document.fonts.load("16px Waterfall", "chữ có dấu ệ ố ớ ữ ộ ẫ ẳ Đ").catch(() => {});
+    document.fonts.load("16px 'VT323 Title'", "Tiếng Việt ệ ố ớ ữ ộ Đ").catch(() => {});
+  }
   const startBtn = $("btn-start");
-  startBtn.textContent = "Loading…";
+  startBtn.textContent = t("loading");
   startBtn.disabled = true;
   await preloadAll();
   startBtn.disabled = false;
-  startBtn.textContent = "Start the journey";
+  startBtn.textContent = t("start");
   // #autostart: vào thẳng màn chơi, bỏ qua màn hình tiêu đề (dùng khi thử nghiệm)
   if (location.hash.includes("autostart")) startBtn.click();
 }

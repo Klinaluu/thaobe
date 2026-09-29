@@ -11,10 +11,38 @@ import {
 } from "./levels.js";
 import { initAudio, sfx, setMuted, isMuted, initMusic, playMusic, duckMusicForVideo, setRainIntensity } from "./audio.js";
 import { initInstallHint, maybeShowInstallHint, detectPlatform, isInstalled } from "./install.js";
+import { getLang, setLang, t, pick, giftLabel, hasAccents } from "./i18n.js";
 import { JourneyGame } from "./engine.js";
+
+// Chữ trong TEXT của config.js. Để trống → câu mặc định theo ngôn ngữ đang chọn. Config khách
+// làm trước khi có bản tiếng Việt chép nguyên câu mặc định tiếng Anh: còn y nguyên thì cũng
+// coi như chưa đổi, để bấm VIE vẫn ra tiếng Việt.
+function text(key) {
+  const v = pick(TEXT[key]);
+  return !v || v === t(key, null, "en") ? t(key) : v;
+}
+
+// Font pixel cho chữ vẽ trên canvas: Press Start 2P không có chữ có dấu nên bản tiếng Việt
+// dùng VT323 (đã phóng cỡ cho khớp trong css/style.css, xem @font-face "VT323 Title").
+const titleFont = () => (getLang() === "vi" ? "'VT323 Title', monospace" : "'Press Start 2P', monospace");
+const ENGINE_KEYS = [
+  "popCollectFirst", "popForgot", "popRide", "popDoubtCleared", "popRainOver",
+  "gearKey", "gearHelmet", "itemUmbrella", "itemEgg", "promptOpen", "bikeMine", "bikeGo", "bossDoubt",
+];
+const engineStrings = () => Object.fromEntries(ENGINE_KEYS.map((k) => [k, t(k)]));
+
+// Chữ ở chỗ dùng font pixel: câu có dấu (khách viết tiếng Việt) thì đổi sang VT323 cả câu,
+// thay vì để Press Start 2P mượn font khác cho từng chữ có dấu → chữ lổn nhổn.
+function setTitleText(el, s) {
+  el.textContent = s;
+  el.classList.toggle("vn-text", hasAccents(s));
+}
 
 // Mốc đi đôi dùng chung một nền; config.js chỉ khai báo phần nội dung.
 const COUPLE_MILESTONES = MILESTONES.map((ms) => ({ ...ms, terrain: COUPLE_TERRAIN }));
+// chữ ngày/tên mốc và tên quà lấy theo ngôn ngữ lúc bắt đầu chơi (đổi được ở màn hình mở đầu)
+const giftItems = () => GIFTS.map((g) => ({ ...g, label: giftLabel(g.label) }));
+const coupleMilestones = () => COUPLE_MILESTONES.map((ms) => ({ ...ms, date: pick(ms.date), name: pick(ms.name) }));
 
 // Nền parallax: khách có thể khai báo số lớp + tốc độ riêng từng cảnh trong config.js
 // (SCENE_LAYERS), không khai báo thì dùng bộ 3 lớp mặc định của assets.js.
@@ -101,6 +129,16 @@ function bottomInsetFor(canvasHeight) {
   const scale = canvasHeight / (window.innerHeight || canvasHeight);
   return Math.round(padPx * scale) + 34; // chừa thêm một khoảng cho thoáng
 }
+// Thanh HUD trên cùng cao bao nhiêu (đổi sang px thế giới) — khung polaroid luôn treo
+// dưới nó, không để dây/khung bị thanh HUD đè lên trông như bị cắt cụt phía trên.
+function topInsetFor(canvasHeight) {
+  const bar = document.querySelector(".hud");
+  if (!bar) return 0;
+  const barPx = bar.getBoundingClientRect().height;
+  if (!barPx) return 0;
+  const scale = canvasHeight / (window.innerHeight || canvasHeight);
+  return Math.round(barPx * scale) + 20; // chừa thêm một khoảng cho thoáng
+}
 
 // ---------------- helpers màn hình ----------------
 const $ = (id) => document.getElementById(id);
@@ -127,7 +165,7 @@ function renderHearts(n) {
 function renderItemSlots(collectedIds) {
   const wrap = $("hud-items");
   wrap.innerHTML = "";
-  GIFTS.forEach((it) => {
+  giftItems().forEach((it) => {
     const slot = document.createElement("div");
     slot.className = "hud-slot" + (collectedIds.has(it.id) ? " got" : "");
     slot.title = it.label;
@@ -146,9 +184,9 @@ function renderItemSlots(collectedIds) {
   });
 }
 let hintTimer = null;
-function showHint(text, ms = 2600) {
+function showHint(msg, ms = 2600) {
   const el = $("hud-hint");
-  el.textContent = text;
+  setTitleText(el, msg);
   el.classList.remove("hidden");
   clearTimeout(hintTimer);
   hintTimer = setTimeout(() => el.classList.add("hidden"), ms);
@@ -180,7 +218,7 @@ function hudSoloMode() {
 function renderMilestoneLabel(ms) {
   const el = $("hud-milestone");
   if (!ms.date && !ms.name) {
-    el.textContent = "Together ♥";
+    el.textContent = t("together");
     return;
   }
   const date = document.createElement("b");
@@ -193,7 +231,7 @@ function hudCoupleMode() {
   $("hud-milestone").classList.remove("hidden");
   $("hud-portrait").classList.remove("hidden");
   $("hud-stats").classList.remove("hidden");
-  $("hud-milestone").textContent = "Together ♥";
+  $("hud-milestone").textContent = t("together");
   renderBar(0);
 }
 
@@ -240,14 +278,14 @@ function startJourney() {
   if (currentGame) currentGame.destroy();
   currentGame = new JourneyGame(
     canvas,
-    { soloSegments: SOLO_SEGMENTS, soloSegW: SOLO_SEG_W, walkTerrain: WALK_TERRAIN, bossTerrain: BOSS_TERRAIN, meetTerrain: MEET_TERRAIN, items: GIFTS, milestones: COUPLE_MILESTONES, maxHearts: MAX_HEARTS, grassScenes: GRASS_SCENES, propSets: PROP_SETS, bottomInset: bottomInsetFor(size.height), emptyPolaroids: SHOW_EMPTY_PHOTO_FRAMES, photoPlaceholder: TEXT.photoPlaceholder },
+    { soloSegments: SOLO_SEGMENTS, soloSegW: SOLO_SEG_W, walkTerrain: WALK_TERRAIN, bossTerrain: BOSS_TERRAIN, meetTerrain: MEET_TERRAIN, items: giftItems(), milestones: coupleMilestones(), maxHearts: MAX_HEARTS, grassScenes: GRASS_SCENES, propSets: PROP_SETS, bottomInset: bottomInsetFor(size.height), topInset: topInsetFor(size.height), emptyPolaroids: SHOW_EMPTY_PHOTO_FRAMES, photoPlaceholder: text("photoPlaceholder"), strings: engineStrings(), titleFont: titleFont() },
     images,
     {
       onItem: (item, count, total) => {
         collected.add(item.id);
         renderItemSlots(collected);
         renderBar((count / total) * 100);
-        showHint(count < total ? `${item.label} ✓  ·  ${count}/${total}` : "All 5 gifts! Now go find her ♥", count < total ? 1800 : 3200);
+        showHint(count < total ? `${item.label} ✓  ·  ${count}/${total}` : t("hintAllGifts"), count < total ? 1800 : 3200);
       },
       onHearts: (n) => renderHearts(n),
       onGameOver: () => showModal("modal-gameover"),
@@ -260,21 +298,21 @@ function startJourney() {
         // mốc không ghi ngày/tên (vd bản khách bỏ chú thích) thì giữ dòng "Together", không để trống ô HUD
         renderMilestoneLabel(ms);
         renderBar((j / COUPLE_MILESTONES.length) * 100);
-        if (ms.event === "rain") showHint("It's raining! Jump the walls and grab the umbrella", 3600);
+        if (ms.event === "rain") showHint(t("hintRain"), 3600);
       },
-      onExtra: (ex) => { if (ex.id === "umbrella") showHint("Rain's over — let's keep going ♥", 2600); },
+      onExtra: (ex) => { if (ex.id === "umbrella") showHint(t("hintRainDone"), 2600); },
       onThunder: () => sfx("thunder"),
       onRain: (k) => setRainIntensity(k),
       onChest: () => openSystemMessage(),
       onGift: () => openVideo(false),
       onScore: (n) => renderScore(n),
       onJump: (k) => sfx(k === 2 ? "jump2" : "jump"),
-      onGear: (ge, ready) => showHint(ready ? "All set — hop on the bike!" : `${ge.label} ✓`, ready ? 2600 : 1400),
-      onMount: () => setTimeout(() => showHint("Collect all 5 gifts — press ▲ twice to jump higher", 3600), 900),
+      onGear: (ge, ready) => showHint(ready ? t("hintGearDone") : `${ge.label} ✓`, ready ? 2600 : 1400),
+      onMount: () => setTimeout(() => showHint(t("hintSolo"), 3600), 900),
       onBoss: (ev, b) => {
-        if (ev === "start") showHint("A cloud of doubt! Jump over it 3 times", 3200);
-        if (ev === "dodge" && b.dodges < 3) showHint(`Nice! ${b.dodges}/3`, 1200);
-        if (ev === "defeated") showHint("Doubt cleared — the road is open ✦", 3000);
+        if (ev === "start") showHint(t("hintBoss"), 3200);
+        if (ev === "dodge" && b.dodges < 3) showHint(t("hintDodge", { n: b.dodges }), 1200);
+        if (ev === "defeated") showHint(t("hintBossDone"), 3000);
       },
     }
   );
@@ -287,13 +325,13 @@ function startJourney() {
   timeTimer = setInterval(() => {
     if (currentGame && currentGame.phase === "solo") $("hud-time").textContent = fmtTime(currentGame.timeSolo);
   }, 250);
-  setTimeout(() => showHint("Grab your key and helmet, then hop on the bike", 3600), 600);
+  setTimeout(() => showHint(t("hintGear"), 3600), 600);
 }
 
 // --- chương 2: gặp nhau ---
 function playMeeting() {
   const bubble = $("bubble-man");
-  bubble.textContent = TEXT.manLine;
+  setTitleText(bubble, text("manLine"));
   // đặt bong bóng ngay trên đầu nhân vật (đổi toạ độ canvas → % màn hình)
   const g = currentGame;
   bubble.style.left = ((g.player.x + g.player.w * 0.5 - g.camX) / g.CW) * 100 + "%";
@@ -301,30 +339,30 @@ function playMeeting() {
   bubble.classList.remove("hidden");
   setTimeout(() => {
     bubble.classList.add("hidden");
-    $("meet-text").textContent = TEXT.meetText;
+    setTitleText($("meet-text"), text("meetText"));
     $("meet-stats").innerHTML =
-      `MISSION COMPLETE<br>score <b>${g.score}</b> · time <b>${fmtTime(g.timeSolo)}</b> · gifts <b>${GIFTS.length}/${GIFTS.length}</b>`;
+      t("missionStats", { score: g.score, time: fmtTime(g.timeSolo), gifts: `${GIFTS.length}/${GIFTS.length}` });
     showScreen("screen-meet");
   }, 1900);
 }
 
 // --- chương 4: hòm hồng → System Message ---
 function openSystemMessage() {
-  $("system-text").textContent = TEXT.systemMessage;
+  $("system-text").textContent = text("systemMessage");
   $("system-reply").textContent = "";
   showModal("modal-system");
 }
 
 // --- hòm quà → thư → video ---
 function openEnvelope() {
-  $("envelope-label").textContent = TEXT.envelopeLabel;
+  setTitleText($("envelope-label"), text("envelopeLabel"));
   showModal("modal-envelope");
 }
 function openLetter(fromEnding) {
-  $("letter-text").textContent = TEXT.letter;
+  $("letter-text").textContent = text("letter");
   $("letter-close").classList.toggle("hidden", !fromEnding);
   $("btn-watch-video").classList.toggle("hidden", fromEnding);
-  $("btn-watch-video").textContent = "Continue the journey ▸";
+  $("btn-watch-video").textContent = t("continueJourney");
   showModal("modal-letter");
 }
 function openVideo(fromEnding) {
@@ -340,7 +378,7 @@ function openVideo(fromEnding) {
     video.classList.add("hidden");
     missing.classList.remove("hidden");
   }
-  $("btn-video-done").textContent = fromEnding ? "Close" : "Continue ▸";
+  $("btn-video-done").textContent = fromEnding ? t("close") : t("continue");
   $("btn-video-done").dataset.fromEnding = fromEnding ? "1" : "";
   showModal("modal-video");
 }
@@ -383,7 +421,7 @@ function wireUI() {
   const fsBtn = $("btn-fullscreen");
   const renderFs = () => {
     fsBtn.textContent = isFs() ? "✕" : "⛶";
-    fsBtn.setAttribute("aria-label", isFs() ? "Exit full screen" : "Full screen");
+    fsBtn.setAttribute("aria-label", isFs() ? t("exitFullScreen") : t("fullScreen"));
   };
   if (!fsSupported) fsBtn.classList.add("hidden");
   fsBtn.addEventListener("click", () => (isFs() ? exitFs() : enterFs()));
@@ -393,6 +431,15 @@ function wireUI() {
     if (e.key === "f" || e.key === "F") (isFs() ? exitFs() : enterFs());
   });
   renderFs();
+
+  // VIE / ENG ở màn hình mở đầu: đổi ngôn ngữ ngay tại chỗ (không tải lại trang), nhớ cho lần sau
+  $("btn-lang").addEventListener("click", () => {
+    setLang(getLang() === "vi" ? "en" : "vi");
+    applyLanguage();
+    applyBranding();
+    renderFs();
+    renderSound();
+  });
 
   $("btn-start").addEventListener("click", () => {
     enterFs();
@@ -419,7 +466,7 @@ function wireUI() {
   const soundBtn = $("btn-sound");
   const renderSound = () => {
     soundBtn.textContent = isMuted() ? "🔇" : "🔊";
-    soundBtn.setAttribute("aria-label", isMuted() ? "Sound off" : "Sound on");
+    soundBtn.setAttribute("aria-label", isMuted() ? t("soundOff") : t("soundOn"));
   };
   renderSound();
   soundBtn.addEventListener("click", () => {
@@ -446,13 +493,13 @@ function wireUI() {
   });
 
   $("btn-sys-maybe").addEventListener("click", () => {
-    $("system-reply").textContent = "> Maybe? Take your time… the button is still waiting.";
+    $("system-reply").textContent = t("sysReplyMaybe");
     $("modal-system").querySelector(".win").classList.remove("shake");
     void $("modal-system").offsetWidth;
     $("modal-system").querySelector(".win").classList.add("shake");
   });
   $("btn-sys-stop").addEventListener("click", () => {
-    $("system-reply").textContent = "> Nice try. That option has been disabled by admin ♥";
+    $("system-reply").textContent = t("sysReplyStop");
     $("modal-system").querySelector(".win").classList.remove("shake");
     void $("modal-system").offsetWidth;
     $("modal-system").querySelector(".win").classList.add("shake");
@@ -463,7 +510,7 @@ function wireUI() {
   });
   $("btn-unlock-continue").addEventListener("click", () => {
     showScreen("screen-level");
-    $("hud-milestone").textContent = "Level 2 · unlocked ♥";
+    $("hud-milestone").textContent = t("level2");
     openEnvelope();
   });
 
@@ -476,7 +523,7 @@ function wireUI() {
   $("btn-watch-video").addEventListener("click", () => {
     hideModal("modal-letter");
     currentGame && currentGame.resumeJourney();
-    showHint("One more stop — keep riding ♥", 3000);
+    showHint(t("hintLastStop"), 3000);
   });
   $("video-player").addEventListener("error", () => {
     $("video-player").classList.add("hidden");
@@ -529,7 +576,7 @@ function wireUI() {
     resizeTimer = setTimeout(() => {
       if (!currentGame) return;
       const s = canvasSizeForViewport();
-      currentGame.resize(s.width, s.height, bottomInsetFor(s.height));
+      currentGame.resize(s.width, s.height, bottomInsetFor(s.height), topInsetFor(s.height));
     }, 150);
   });
 }
@@ -595,10 +642,10 @@ function wireGamepad() {
 
 // Đổ nội dung từ config.js vào giao diện (một nguồn duy nhất để cá nhân hoá)
 function applyBranding() {
-  document.title = GAME_TITLE;
-  $("title-heading").textContent = GAME_TITLE;
-  $("title-subtitle").textContent = GAME_SUBTITLE;
-  $("title-window-name").textContent = WINDOW_NAME;
+  document.title = pick(GAME_TITLE);
+  setTitleText($("title-heading"), pick(GAME_TITLE));
+  $("title-subtitle").textContent = pick(GAME_SUBTITLE);
+  setTitleText($("title-window-name"), pick(WINDOW_NAME));
   const frame = $("title-photo-frame");
   if (TITLE_PHOTO) {
     frame.className = "title-hero photo";
@@ -608,27 +655,50 @@ function applyBranding() {
     img.alt = "";
     frame.appendChild(img);
   } else {
-    frame.textContent = TEXT.photoPlaceholder;
+    frame.textContent = text("photoPlaceholder");
   }
-  $("letter-window-name").textContent = TEXT.letterTitle;
-  $("rotate-title").textContent = TEXT.rotateTitle;
-  $("rotate-text").textContent = TEXT.rotateText;
-  $("title-rotate-tip").textContent = TEXT.rotateTip;
-  $("video-missing").textContent = TEXT.videoMissing;
+  setTitleText($("letter-window-name"), text("letterTitle"));
+  $("rotate-title").textContent = text("rotateTitle");
+  $("rotate-text").textContent = text("rotateText");
+  $("title-rotate-tip").textContent = text("rotateTip");
+  $("video-missing").textContent = text("videoMissing");
+}
+
+// Chữ cố định trong index.html (các phần tử có data-i18n) → đúng ngôn ngữ máy
+function applyLanguage() {
+  document.documentElement.lang = getLang();
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    const s = t(el.dataset.i18n);
+    if (el.closest(".win-bar")) setTitleText(el, s);
+    else el.textContent = s;
+  });
+  const startBtn = $("btn-start");
+  if (startBtn.disabled) startBtn.textContent = t("loading"); // đang tải ảnh thì giữ chữ "Đang tải…"
+  const langBtn = $("btn-lang");
+  langBtn.textContent = t("langSwitch");
+  langBtn.setAttribute("aria-label", t("langSwitchLabel"));
 }
 
 async function init() {
   document.body.classList.add("on-title-screen"); // màn hình mặc định khi tải trang là title
+  applyLanguage();
   applyBranding();
   wireUI();
   initInstallHint({ text: TEXT.install });
   initMusic(MUSIC_SRC);
+  // Tải trước font Waterfall (cả 2 file latin + vietnamese) từ lúc mở trang — chuyện mở lá
+  // thư có thể xảy ra rất lâu sau (giữa game), nên tải sớm để lúc đó không bị "nhảy" từ
+  // font dự phòng sang Waterfall giữa chừng khi trình duyệt vừa tải xong.
+  if (document.fonts && document.fonts.load) {
+    document.fonts.load("16px Waterfall", "chữ có dấu ệ ố ớ ữ ộ ẫ ẳ Đ").catch(() => {});
+    document.fonts.load("16px 'VT323 Title'", "Tiếng Việt ệ ố ớ ữ ộ Đ").catch(() => {});
+  }
   const startBtn = $("btn-start");
-  startBtn.textContent = "Loading…";
+  startBtn.textContent = t("loading");
   startBtn.disabled = true;
   await preloadAll();
   startBtn.disabled = false;
-  startBtn.textContent = "Start the journey";
+  startBtn.textContent = t("start");
   // #autostart: vào thẳng màn chơi, bỏ qua màn hình tiêu đề (dùng khi thử nghiệm)
   if (location.hash.includes("autostart")) startBtn.click();
 }

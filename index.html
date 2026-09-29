@@ -1,7 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" translate="no">
 <head>
 <meta charset="UTF-8">
+<!-- game tự có bản tiếng Việt (js/i18n.js): tắt tự dịch của trình duyệt (dịch máy sai nghĩa, vỡ font pixel)
+     và tắt chế độ tự làm tối (Chrome/Samsung tự đảo màu làm cửa sổ hồng thành đen) -->
+<meta name="google" content="notranslate">
+<meta name="color-scheme" content="only light">
+<!-- extension Dark Reader (Chrome/Edge/Firefox) cũng hay tự đảo màu trang: khoá lại -->
+<meta name="darkreader-lock">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -47,11 +53,11 @@
         <h1 id="title-heading" class="game-title">MADE FOR US</h1>
         <p id="title-subtitle" class="game-subtitle">Our love journey</p>
         <div id="title-photo-frame" class="title-hero frame">(insert pictures here)</div>
-        <button id="btn-start" class="pixel-btn primary">▶ Start the journey</button>
-        <div class="title-tip kb-only"><img class="tip-icon" src="assets/characters/Item-Key-Helmet-01.png" alt="">◀ ▶ move · ▲ jump · ▲▲ double jump · F full screen</div>
-        <div class="title-tip kb-only">🎮 gamepad: stick / D-pad to move · A to jump</div>
+        <button id="btn-start" class="pixel-btn primary" data-i18n="start">▶ Start the journey</button>
+        <div class="title-tip kb-only"><img class="tip-icon" src="assets/characters/Item-Key-Helmet-01.png" alt=""><span data-i18n="tipKeyboard">◀ ▶ move · ▲ jump · ▲▲ double jump · F full screen</span></div>
+        <div class="title-tip kb-only" data-i18n="tipGamepad">🎮 gamepad: stick / D-pad to move · A to jump</div>
         <div id="title-rotate-tip" class="title-tip tip-plain touch-only">⟳ Hold your device sideways to play</div>
-        <button id="title-install-tip" class="title-tip tip-link touch-only">+ Add to Home Screen — play full screen</button>
+        <button id="title-install-tip" class="title-tip tip-link touch-only" data-i18n="tipInstall">+ Add to Home Screen — play full screen</button>
       </div>
     </div>
   </section>
@@ -74,7 +80,7 @@
     <div id="hud-hint" class="hud-hint hidden"></div>
     <div id="bubble-man" class="speech-bubble hidden"></div>
     <div class="level-bottom-ui">
-      <div class="controls-hint"><span class="hint-kb">◀ ▶ move · ▲ jump · ▲▲ double jump · tap to open</span><span class="hint-touch">hold ◀ ▶ to move · tap ▲ to jump · tap ▲ twice to jump higher</span></div>
+      <div class="controls-hint"><span class="hint-kb" data-i18n="controlsKeyboard">◀ ▶ move · ▲ jump · ▲▲ double jump · tap to open</span><span class="hint-touch" data-i18n="controlsTouch">hold ◀ ▶ to move · tap ▲ to jump · tap ▲ twice to jump higher</span></div>
       <div class="touch-controls">
         <div class="pad-left">
           <button id="btn-left" class="touch-btn">◀</button>
@@ -97,7 +103,7 @@
       <img class="meet-couple" src="assets/characters/Couple-Pose-Happy-01.png" alt="">
       <p id="meet-text" class="meet-text"></p>
       <div id="meet-stats" class="meet-stats"></div>
-      <button id="btn-meet-continue" class="pixel-btn primary">Continue ▸</button>
+      <button id="btn-meet-continue" class="pixel-btn primary" data-i18n="continue">Continue ▸</button>
     </div>
   </section>
 
@@ -109,29 +115,30 @@
         <div class="shackle"></div>
         <div class="lock-body"><div class="keyhole"></div></div>
       </div>
-      <div class="unlock-title">Level Unlocked</div>
-      <button id="btn-unlock-continue" class="pixel-btn primary">Continue ▸</button>
+      <div class="unlock-title" data-i18n="levelUnlocked">Level Unlocked</div>
+      <button id="btn-unlock-continue" class="pixel-btn primary" data-i18n="continue">Continue ▸</button>
     </div>
   </section>
 
   <!-- ============ ENDING ============ -->
   <section id="screen-ending" class="screen pink-bg">
     <div class="win ending-win">
-      <div class="win-bar"><span>Completed</span><i class="win-x">✕</i></div>
+      <div class="win-bar"><span data-i18n="endingTitle">Completed</span><i class="win-x">✕</i></div>
       <div class="win-body ending-content">
         <img class="ending-couple" src="assets/characters/Scene-Terrace-Bike-Iso-01.png" alt="">
         <div class="ending-row">
-          <button id="btn-ending-letter" class="pixel-btn primary">💌 Love letter</button>
-          <button id="btn-ending-video" class="pixel-btn primary">🎬 Little movie</button>
+          <button id="btn-ending-letter" class="pixel-btn primary" data-i18n="endingLetter">💌 Love letter</button>
+          <button id="btn-ending-video" class="pixel-btn primary" data-i18n="endingVideo">🎬 Little movie</button>
         </div>
-        <div class="ending-sub">— or ride it again —</div>
-        <button id="btn-play-again" class="pixel-btn">▶ Play again</button>
+        <div class="ending-sub" data-i18n="endingSub">— or ride it again —</div>
+        <button id="btn-play-again" class="pixel-btn" data-i18n="playAgain">▶ Play again</button>
       </div>
     </div>
   </section>
 
 </div>
 
+<button id="btn-lang" class="sound-btn lang-btn" aria-label="Chuyển sang tiếng Việt">VIE</button>
 <button id="btn-fullscreen" class="sound-btn fs-btn" aria-label="Full screen">⛶</button>
 <button id="btn-sound" class="sound-btn" aria-label="Sound on">🔊</button>
 
@@ -152,9 +159,9 @@
   <div class="win small">
     <div class="win-bar danger"><span>GAME_OVER</span><i class="win-x">✕</i></div>
     <div class="win-body">
-      <div class="box-title">Out of hearts!</div>
-      <div class="box-text">The gifts you found are safe. Try that stretch again.</div>
-      <button id="btn-retry" class="pixel-btn primary">↻ Try again</button>
+      <div class="box-title" data-i18n="gameOverTitle">Out of hearts!</div>
+      <div class="box-text" data-i18n="gameOverText">The gifts you found are safe. Try that stretch again.</div>
+      <button id="btn-retry" class="pixel-btn primary" data-i18n="tryAgain">↻ Try again</button>
     </div>
   </div>
 </div>
@@ -166,9 +173,9 @@
       <div id="system-text" class="system-text"></div>
       <div id="system-reply" class="system-reply"></div>
       <div class="system-buttons">
-        <button id="btn-sys-maybe" class="pixel-btn">Maybe</button>
-        <button id="btn-sys-yes" class="pixel-btn primary">Definitely!</button>
-        <button id="btn-sys-stop" class="pixel-btn">Stop!</button>
+        <button id="btn-sys-maybe" class="pixel-btn" data-i18n="sysMaybe">Maybe</button>
+        <button id="btn-sys-yes" class="pixel-btn primary" data-i18n="sysYes">Definitely!</button>
+        <button id="btn-sys-stop" class="pixel-btn" data-i18n="sysStop">Stop!</button>
       </div>
     </div>
   </div>
@@ -180,10 +187,10 @@
     <div class="win-body">
       <div class="envelope">
         <div class="envelope-flap"></div>
-        <div class="envelope-stamp">CONFIDENTIAL</div>
+        <div class="envelope-stamp" data-i18n="stampConfidential">CONFIDENTIAL</div>
         <div id="envelope-label" class="envelope-label"></div>
       </div>
-      <button id="btn-open-letter" class="pixel-btn primary">Read ➜</button>
+      <button id="btn-open-letter" class="pixel-btn primary" data-i18n="readLetter">Read ➜</button>
     </div>
   </div>
 </div>
@@ -194,7 +201,7 @@
     <div class="win-body letter-body">
       <img class="letter-scene" src="assets/characters/Scene-Terrace-Sitting-Iso-01.png" alt="">
       <pre id="letter-text" class="letter-text"></pre>
-      <button id="btn-watch-video" class="pixel-btn primary">🎬 Watch the little movie</button>
+      <button id="btn-watch-video" class="pixel-btn primary" data-i18n="continueJourney">Continue the journey ▸</button>
     </div>
   </div>
 </div>
@@ -205,7 +212,7 @@
     <div class="win-body video-body">
       <video id="video-player" controls playsinline preload="metadata"></video>
       <div id="video-missing" class="box-text hidden">Wait for your video 🎬</div>
-      <button id="btn-video-done" class="pixel-btn primary">Continue ▸</button>
+      <button id="btn-video-done" class="pixel-btn primary" data-i18n="continue">Continue ▸</button>
     </div>
   </div>
 </div>
