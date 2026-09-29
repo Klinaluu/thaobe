@@ -424,7 +424,7 @@ const SCENE_TOP = { "ho-guom": "#32bbfa", "ho-tay": "#9264ac" };
 // Cảnh thiên nhiên: bục lơ lửng vẽ bằng bục cỏ, ven đường rải cây cối
 const GRASS_SCENES = ["ho-guom"];
 
-return { IMG, PROPS, PROP_SETS, SCENES, SCENE_IDS, SCENE_SPEEDS, SCENE_SINK, SCENE_TOP, GRASS_SCENES };
+return { IMG, PROPS, PROP_SETS, SCENES, SCENE_SPEEDS, SCENE_SINK, SCENE_TOP, GRASS_SCENES };
 })();
 
 const __mod_levels = (() => {
@@ -970,23 +970,7 @@ function setRainIntensity(k) {
   rainGain.gain.setTargetAtTime(Math.max(0, Math.min(1, k)) * 0.25, ctx.currentTime, 0.4);
 }
 
-// mức tín hiệu hiện tại (RMS) — dùng để kiểm tra nhanh trong console
-let analyser = null;
-function level() {
-  if (!ctx) return -1;
-  if (!analyser) {
-    analyser = ctx.createAnalyser();
-    analyser.fftSize = 1024;
-    master.connect(analyser);
-  }
-  const buf = new Float32Array(analyser.fftSize);
-  analyser.getFloatTimeDomainData(buf);
-  let s = 0;
-  for (let i = 0; i < buf.length; i++) s += buf[i] * buf[i];
-  return Math.sqrt(s / buf.length);
-}
-
-return { initAudio, isMuted, setMuted, initMusic, playMusic, duckMusicForVideo, sfx, setRainIntensity, level };
+return { initAudio, isMuted, setMuted, initMusic, playMusic, duckMusicForVideo, sfx, setRainIntensity };
 })();
 
 const __mod_install = (() => {
@@ -1169,19 +1153,35 @@ function buildModal(platform, text) {
   const modal = document.createElement("div");
   modal.className = "modal";
   modal.id = "modal-install";
+  // khung tĩnh; mọi chữ (có thể ghi đè từ config.js) và link gán bằng textContent / thuộc tính,
+  // không ghép vào HTML — chữ có < hay " cũng không chèn được mã vào trang
   modal.innerHTML = `
     <div class="win small">
-      <div class="win-bar"><span>${copy.title}</span><button class="win-x btn" data-close>✕</button></div>
+      <div class="win-bar"><span data-title></span><button class="win-x btn" data-close>✕</button></div>
       <div class="win-body">
-        <div class="install-heading">${copy.heading}</div>
-        <ol class="install-steps">${copy.steps.map((s) => `<li>${s}</li>`).join("")}</ol>
-        ${copy.note ? `<p class="install-note">${copy.note}</p>` : ""}
-        <button class="pixel-btn primary" data-action data-install-label="${copy.installAction || ""}">${platform === "android" && deferredPrompt && copy.installAction ? copy.installAction : copy.action}</button>
+        <div class="install-heading" data-heading></div>
+        <ol class="install-steps" data-steps></ol>
+        <p class="install-note hidden" data-note></p>
+        <button class="pixel-btn primary" data-action></button>
         <input class="install-link hidden" data-link readonly>
       </div>
     </div>`;
-  // gán qua thuộc tính, không ghép vào HTML: link có dấu " sẽ không chèn được mã vào trang
-  modal.querySelector("[data-link]").value = location.href;
+  const $in = (sel) => modal.querySelector(sel);
+  $in("[data-title]").textContent = copy.title;
+  $in("[data-heading]").textContent = copy.heading;
+  for (const step of copy.steps) {
+    const li = document.createElement("li");
+    li.textContent = step;
+    $in("[data-steps]").appendChild(li);
+  }
+  if (copy.note) {
+    $in("[data-note]").textContent = copy.note;
+    $in("[data-note]").classList.remove("hidden");
+  }
+  const action = $in("[data-action]");
+  action.dataset.installLabel = copy.installAction || "";
+  action.textContent = platform === "android" && deferredPrompt && copy.installAction ? copy.installAction : copy.action;
+  $in("[data-link]").value = location.href;
   return modal;
 }
 
@@ -2997,7 +2997,7 @@ function drawPlayer(ctx, p, playerImg, drawW, hit, groundY, drawH, yOffset) {
   ctx.restore();
 }
 
-return { CW, CH, JourneyGame };
+return { JourneyGame };
 })();
 
 const __mod_main = (() => {
@@ -3075,10 +3075,13 @@ function preload(src) {
   return new Promise((resolve) => {
     const img = getImg(src);
     if (img.complete) return resolve(img);
-    img.onload = () => resolve(img);
-    img.onerror = () => resolve(img);
+    img.addEventListener("load", () => resolve(img), { once: true });
+    img.addEventListener("error", () => resolve(img), { once: true });
   });
 }
+// Mạng chậm (4G yếu, app ngoài màn hình chính) hay một ảnh bị treo không được giữ nút Start ở
+// "Loading…" mãi: chờ tối đa chừng này rồi cho chơi, ảnh nào chưa xong thì game tự vẽ khi tải xong.
+const PRELOAD_TIMEOUT_MS = 8000;
 function loaded(img) {
   return !!(img && img.complete && img.naturalWidth > 0);
 }
@@ -3103,7 +3106,10 @@ async function preloadAll() {
   COUPLE_MILESTONES.forEach((ms) => {
     if (ms.photo) srcs.add(ms.photo);
   });
-  await Promise.all([...srcs].map(preload));
+  await Promise.race([
+    Promise.all([...srcs].map(preload)),
+    new Promise((resolve) => setTimeout(resolve, PRELOAD_TIMEOUT_MS)),
+  ]);
 }
 
 // Canvas khớp đúng tỉ lệ màn hình thiết bị (phủ kín, không méo, không cắt).

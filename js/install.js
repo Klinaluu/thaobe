@@ -177,19 +177,35 @@ function buildModal(platform, text) {
   const modal = document.createElement("div");
   modal.className = "modal";
   modal.id = "modal-install";
+  // khung tĩnh; mọi chữ (có thể ghi đè từ config.js) và link gán bằng textContent / thuộc tính,
+  // không ghép vào HTML — chữ có < hay " cũng không chèn được mã vào trang
   modal.innerHTML = `
     <div class="win small">
-      <div class="win-bar"><span>${copy.title}</span><button class="win-x btn" data-close>✕</button></div>
+      <div class="win-bar"><span data-title></span><button class="win-x btn" data-close>✕</button></div>
       <div class="win-body">
-        <div class="install-heading">${copy.heading}</div>
-        <ol class="install-steps">${copy.steps.map((s) => `<li>${s}</li>`).join("")}</ol>
-        ${copy.note ? `<p class="install-note">${copy.note}</p>` : ""}
-        <button class="pixel-btn primary" data-action data-install-label="${copy.installAction || ""}">${platform === "android" && deferredPrompt && copy.installAction ? copy.installAction : copy.action}</button>
+        <div class="install-heading" data-heading></div>
+        <ol class="install-steps" data-steps></ol>
+        <p class="install-note hidden" data-note></p>
+        <button class="pixel-btn primary" data-action></button>
         <input class="install-link hidden" data-link readonly>
       </div>
     </div>`;
-  // gán qua thuộc tính, không ghép vào HTML: link có dấu " sẽ không chèn được mã vào trang
-  modal.querySelector("[data-link]").value = location.href;
+  const $in = (sel) => modal.querySelector(sel);
+  $in("[data-title]").textContent = copy.title;
+  $in("[data-heading]").textContent = copy.heading;
+  for (const step of copy.steps) {
+    const li = document.createElement("li");
+    li.textContent = step;
+    $in("[data-steps]").appendChild(li);
+  }
+  if (copy.note) {
+    $in("[data-note]").textContent = copy.note;
+    $in("[data-note]").classList.remove("hidden");
+  }
+  const action = $in("[data-action]");
+  action.dataset.installLabel = copy.installAction || "";
+  action.textContent = platform === "android" && deferredPrompt && copy.installAction ? copy.installAction : copy.action;
+  $in("[data-link]").value = location.href;
   return modal;
 }
 

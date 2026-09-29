@@ -632,6 +632,9 @@ button { font-family: var(--font-body); cursor: pointer; }
   .touch-btn { width: 40px; height: 40px; font-size: 15px; }
   .touch-btn.jump { width: 50px; height: 50px; font-size: 18px; }
   #screen-title, #screen-ending, .screen.night { justify-content: flex-start; padding-top: 12px; }
+  /* margin tự động: đủ chỗ thì cửa sổ nằm giữa màn hình, thiếu chỗ thì dồn lên đầu và cuộn được
+     (justify-content: center sẽ cắt mất phần trên khi nội dung cao hơn màn hình) */
+  .title-win, .ending-win, .meet-content, .unlock-content { margin-block: auto; }
   .title-card { padding: 10px; }
   .title-hero { width: 100px; margin-bottom: 8px; }
   .game-title { text-shadow: 2px 2px 0 #fff, 3px 3px 0 var(--ink); }

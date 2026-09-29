@@ -77,10 +77,13 @@ function preload(src) {
   return new Promise((resolve) => {
     const img = getImg(src);
     if (img.complete) return resolve(img);
-    img.onload = () => resolve(img);
-    img.onerror = () => resolve(img);
+    img.addEventListener("load", () => resolve(img), { once: true });
+    img.addEventListener("error", () => resolve(img), { once: true });
   });
 }
+// Mạng chậm (4G yếu, app ngoài màn hình chính) hay một ảnh bị treo không được giữ nút Start ở
+// "Loading…" mãi: chờ tối đa chừng này rồi cho chơi, ảnh nào chưa xong thì game tự vẽ khi tải xong.
+const PRELOAD_TIMEOUT_MS = 8000;
 function loaded(img) {
   return !!(img && img.complete && img.naturalWidth > 0);
 }
@@ -105,7 +108,10 @@ async function preloadAll() {
   COUPLE_MILESTONES.forEach((ms) => {
     if (ms.photo) srcs.add(ms.photo);
   });
-  await Promise.all([...srcs].map(preload));
+  await Promise.race([
+    Promise.all([...srcs].map(preload)),
+    new Promise((resolve) => setTimeout(resolve, PRELOAD_TIMEOUT_MS)),
+  ]);
 }
 
 // Canvas khớp đúng tỉ lệ màn hình thiết bị (phủ kín, không méo, không cắt).

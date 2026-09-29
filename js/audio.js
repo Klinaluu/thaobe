@@ -210,19 +210,3 @@ export function setRainIntensity(k) {
   }
   rainGain.gain.setTargetAtTime(Math.max(0, Math.min(1, k)) * 0.25, ctx.currentTime, 0.4);
 }
-
-// mức tín hiệu hiện tại (RMS) — dùng để kiểm tra nhanh trong console
-let analyser = null;
-export function level() {
-  if (!ctx) return -1;
-  if (!analyser) {
-    analyser = ctx.createAnalyser();
-    analyser.fftSize = 1024;
-    master.connect(analyser);
-  }
-  const buf = new Float32Array(analyser.fftSize);
-  analyser.getFloatTimeDomainData(buf);
-  let s = 0;
-  for (let i = 0; i < buf.length; i++) s += buf[i] * buf[i];
-  return Math.sqrt(s / buf.length);
-}

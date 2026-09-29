@@ -8,8 +8,8 @@
 //             hòm hồng (System Message → lá thư) và hòm quà rơi xuống (video)
 // ============================================================
 
-export const CW = 960;
-export const CH = 360;
+const CW = 960;
+const CH = 360;
 
 const GRAVITY = 1900;
 const MOVE_SPEED = 230;

@@ -80,7 +80,7 @@ export const SCENES = {
   "ho-guom": scene("ho-guom"), // Hồ Gươm ban ngày — đi bộ, solo, gặp nhau
   "ho-tay": scene("ho-tay"), // hoàng hôn — chặng đi đôi
 };
-export const SCENE_IDS = Object.keys(SCENES);
+const SCENE_IDS = Object.keys(SCENES);
 // hệ số trôi của từng lớp so với camera (0 = đứng yên, 1 = trôi cùng đường)
 export const SCENE_SPEEDS = {
   "ho-guom": [0.05, 0.16, 0.4],
